@@ -14,55 +14,39 @@ import { Todo } from "./Todo"
 import { parseStringifiedTodos } from "@/lib/utils"
 import { toast } from "sonner"
 
-type AddTodoProps = {
-    setTodos: React.Dispatch<React.SetStateAction<Todo[]>>
+type EditTodoProps = {
+    todo: Todo
+    onSubmit: (updatedTodos: Todo[]) => void
 }
 
 const formSchema = z.object({
     title: z.string().min(2).max(50),
 })
 
-export const AddTodo = ({ setTodos }: AddTodoProps) => {
+export const EditTodo = ({ todo, onSubmit }: EditTodoProps) => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: "",
+            title: todo.title,
         },
     })
 
-    function onSubmit({ title }: z.infer<typeof formSchema>) {
+    function editTodo({ title }: z.infer<typeof formSchema>) {
         const item = localStorage.getItem("todos")
-
-        if (!item) {
-            localStorage.setItem("todos", JSON.stringify([{ id: 1, title }]))
-            return
-        }
-
+        if (!item) return
         const storedTodos = parseStringifiedTodos(item)
+        const queriedTodoId = storedTodos.findIndex((e) => e.id === todo.id)
+        storedTodos[queriedTodoId] = { ...todo, title }
 
-        const todoId = storedTodos.length
-            ? storedTodos[storedTodos.length - 1].id + 1
-            : 1
-
-        const newTodo: Todo = {
-            id: todoId,
-            title,
-            done: false,
-        }
-
-        storedTodos.push(newTodo)
-        setTodos((prev) => [...prev, newTodo])
         localStorage.setItem("todos", JSON.stringify(storedTodos))
-
-        form.reset()
-
-        toast(`Successfuly added ${title}`)
+        onSubmit(storedTodos)
+        toast(`Successfuly edited todo`)
     }
 
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={form.handleSubmit(editTodo)}
                 className="flex items-center w-full gap-4"
             >
                 <FormField
@@ -77,7 +61,7 @@ export const AddTodo = ({ setTodos }: AddTodoProps) => {
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Submit</Button>
+                <Button type="submit">Update</Button>
             </form>
         </Form>
     )
