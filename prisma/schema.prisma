@@ -21,9 +21,9 @@ model User {
     displayName  String?
     bio          String?
 
-    todos      Todo[]
-    categories Tag[]
-    sessions   Session[]
+    todos    Todo[]
+    tags     Tag[]
+    sessions Session[]
 
     @@map("users")
 }
@@ -45,9 +45,10 @@ model Todo {
     deadline DateTime?
     isDone   Boolean
 
-    authorId   String
-    user       User       @relation(references: [id], fields: [authorId], onDelete: Cascade)
-    categories Tag[]
+    authorId String
+    user     User   @relation(references: [id], fields: [authorId], onDelete: Cascade)
+    tagId    String
+    tag      Tag    @relation(references: [id], fields: [tagId], onDelete: Cascade)
 
     @@map("todos")
 }
@@ -59,8 +60,7 @@ model Tag {
 
     authorId  String
     createdBy User   @relation(references: [id], fields: [authorId], onDelete: Cascade)
-    todoId    String
-    todos     Todo   @relation(references: [id], fields: [todoId], onDelete: Cascade)
+    todos     Todo[]
 
     @@map("tags")
 }
