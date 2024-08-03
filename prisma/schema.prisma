@@ -45,10 +45,10 @@ model Todo {
     deadline DateTime?
     isDone   Boolean
 
-    authorId String
-    user     User   @relation(references: [id], fields: [authorId], onDelete: Cascade)
-    tagId    String
-    tag      Tag    @relation(references: [id], fields: [tagId], onDelete: Cascade)
+    authorId  String
+    createdBy User   @relation(references: [id], fields: [authorId], onDelete: Cascade)
+    tagId     String
+    tag       Tag    @relation(references: [id], fields: [tagId], onDelete: Cascade)
 
     @@map("todos")
 }
