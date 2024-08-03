@@ -21,7 +21,11 @@ model User {
     displayName  String?
     bio          String?
 
-    sessions Session[]
+    todos      Todo[]
+    categories Category[]
+    sessions   Session[]
+
+    @@map("users")
 }
 
 model Session {
@@ -30,4 +34,33 @@ model Session {
     expiresAt DateTime
 
     user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+    
+    @@map("sessions")
+}
+
+model Todo {
+    id       String    @id
+    title    String
+    detail   String?
+    deadline DateTime?
+    isDone   Boolean
+
+    authorId   String
+    user       User       @relation(references: [id], fields: [authorId], onDelete: Cascade)
+    categories Category[]
+
+    @@map("todos")
+}
+
+model Category {
+    id    String @id
+    name  String
+    color String
+
+    authorId  String
+    createdBy User   @relation(references: [id], fields: [authorId], onDelete: Cascade)
+    todoId    String
+    todos     Todo   @relation(references: [id], fields: [todoId], onDelete: Cascade)
+
+    @@map("categories")
 }

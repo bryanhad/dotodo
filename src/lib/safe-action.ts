@@ -14,6 +14,7 @@ export class CustomError extends Error {
 
 export const actionClient = createSafeActionClient({
     handleReturnedServerError: (err, util) => {
+        console.error(err)
         switch (true) {
             case err instanceof CustomError:
                 return { description: err.message, title: err.title }             

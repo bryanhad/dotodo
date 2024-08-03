@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import DarkModeToggle from "@/components/dark-mode-toggle";
+import Title from "@/components/title";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -35,9 +36,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex items-center gap-4">
+          <div className="flex justify-center items-center gap-4">
             <DarkModeToggle />
-            <h1 className="text-xl font-medium">Trying out lucia</h1>
+            <Title/>
           </div>
           {children}
           <Toaster />

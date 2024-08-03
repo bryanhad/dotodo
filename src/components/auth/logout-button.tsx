@@ -2,11 +2,12 @@
 
 import { logOut } from "@/lib/server-actions";
 import { useAction } from "next-safe-action/hooks";
-import { useToast } from "./ui/use-toast";
-import SubmitButton from "./submit-button";
+import { useToast } from "@/components/ui/use-toast";
+import SubmitButton from "@/components/submit-button";
 
 function LogoutButton() {
   const { toast } = useToast();
+  
   const { execute, isExecuting } = useAction(logOut, {
     onError: ({ error: { serverError } }) => {
       toast({

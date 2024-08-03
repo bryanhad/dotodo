@@ -1,8 +1,8 @@
 import { validateRequest } from "@/auth";
 import AuthModal from "@/components/auth-modal";
-import LogoutButton from "@/components/logout-button";
-import SignInForm from "@/components/sign-in-form";
-import SignUpForm from "@/components/sign-up-form";
+import LogoutButton from "@/components/auth/logout-button";
+import SignInForm from "@/components/auth/sign-in-form";
+import SignUpForm from "@/components/auth/sign-up-form";
 
 export default async function Home() {
   const { user } = await validateRequest();

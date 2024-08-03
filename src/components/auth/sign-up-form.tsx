@@ -9,17 +9,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signIn } from "@/lib/server-actions";
-import { signInFormSchema, SignInFormValues } from "@/lib/validation";
+import {} from "@/lib/server-actions";
+import { signUpFormSchema, SignUpFormValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
 import { useForm } from "react-hook-form";
-import SubmitButton from "./submit-button";
-import { useToast } from "./ui/use-toast";
+import SubmitButton from "../submit-button";
+import { useToast } from "../ui/use-toast";
+import { signUp } from "@/app/(auth)/sign-up/action";
 
-function SignInForm() {
+function SignUpForm() {
   const { toast } = useToast();
-  const { execute, result, isExecuting } = useAction(signIn, {
+  const { execute, result, isExecuting } = useAction(signUp, {
     onError: ({ error: { serverError, validationErrors } }) => {
       if (serverError) {
         toast({
@@ -36,23 +37,23 @@ function SignInForm() {
         });
       }
     },
-    onSuccess: ({ input }) => {
+    onSuccess: ({ data }) => {
       toast({
         title: "Hooray!",
-        description: `Welcome ${input.email}!`,
+        description: "Your account has been created!",
       });
     },
   });
 
-  const form = useForm<SignInFormValues>({
-    resolver: zodResolver(signInFormSchema),
+  const form = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpFormSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  function onSubmit(values: SignInFormValues) {
+  function onSubmit(values: SignUpFormValues) {
     execute(values);
   }
 
@@ -102,4 +103,4 @@ function SignInForm() {
   );
 }
 
-export default SignInForm;
+export default SignUpForm;
