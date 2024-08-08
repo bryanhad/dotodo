@@ -21,3 +21,11 @@ export const signInFormSchema = z.object({
 });
 
 export type SignInFormValues = z.infer<typeof signInFormSchema>;
+
+export const createTagSchema = z.object({
+    authorId: stringRequired,
+    name: stringRequired.max(50),
+    color: stringRequired.max(255)
+})
+
+export type CreateTagFormValues = z.infer<typeof createTagSchema>;
