@@ -71,7 +71,3 @@
    
 }
 
-.circle-picker span:focus-within div  {
-    border-radius: 50%;
-    outline: 3px solid white; /* Add a border when focused */
-}

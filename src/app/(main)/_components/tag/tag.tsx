@@ -20,11 +20,11 @@ function Tag(props: Props) {
         return (
             <Button
                 type="button"
-                size={'sm'}
+                size={"sm"}
                 variant={"outline"}
                 className={cn(
-                    "w-full flex justify-start gap-2",
-                    {"hover:bg-transparent": props.isPreview},
+                    "flex w-full justify-start gap-2",
+                    { "hover:bg-transparent": props.isPreview },
                     props.className,
                 )}
             >
@@ -36,20 +36,23 @@ function Tag(props: Props) {
 
     return (
         <Button
+            asChild
             variant={"ghost"}
             className={cn(
                 "flex w-full items-center justify-between gap-4",
                 props.className,
             )}
         >
-            <div className="flex items-center gap-4">
-                <TagIcon hexColor={props.color} />
-                {props.name}
-            </div>
-            <div className="p-1">
-                <Button size={"sm"} className="" variant={"outline"}>
-                    <Trash2 className="shrink-0" size={14} />
-                </Button>
+            <div tabIndex={0} role="button" aria-describedby="">
+                <div className="flex items-center gap-4">
+                    <TagIcon hexColor={props.color} />
+                    {props.name}
+                </div>
+                <div className="p-1">
+                    <Button size={"sm"} className="" variant={"outline"}>
+                        <Trash2 className="shrink-0" size={14} />
+                    </Button>
+                </div>
             </div>
         </Button>
     );

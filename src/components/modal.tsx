@@ -18,6 +18,7 @@ type BaseProps = {
     title?: string;
     desc?: string;
     children: React.ReactNode;
+    ariaDescription: string;
 } & DialogProps;
 
 type Props =
@@ -30,6 +31,7 @@ function Modal({
     children,
     desc,
     title,
+    ariaDescription,
     ...props
 }: Props) {
     return (
@@ -58,6 +60,10 @@ function Modal({
                 )}
 
                 {children}
+                <DialogDescription
+                    aria-describedby={ariaDescription}
+                    hidden
+                ></DialogDescription>
                 <DialogFooter className="sm:justify-start">
                     <DialogClose asChild>
                         <Button type="button" variant="secondary">

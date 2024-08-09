@@ -21,7 +21,8 @@ function ChooseTagsIcon() {
     return (
         <div className="flex gap-1">
             <Modal
-            title="Pick a tag for your todo"
+                ariaDescription="create todo modal"
+                title="Pick a tag for your todo"
                 customButton={
                     <div className="flex gap-2 p-2">
                         <TagIcon defaultColor={TagColors.ORANGE} />
