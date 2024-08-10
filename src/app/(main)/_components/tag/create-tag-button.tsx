@@ -18,8 +18,8 @@ import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { createTag } from "./action";
-import { TagColors } from "./tag";
 import ChooseColorButton from "./choose-color-button";
+import { TagColors } from "./tag";
 
 type Props = {
     currentLoggedInUserId: string;

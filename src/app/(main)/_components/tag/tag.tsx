@@ -1,4 +1,3 @@
-import Modal from "@/components/modal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Tag as TagT } from "@prisma/client";
@@ -14,6 +13,27 @@ type NonPreviewProps = BaseProps &
     Omit<TagT, "color" | "name"> & { isPreview?: false };
 
 type Props = PreviewProps | NonPreviewProps;
+
+export enum TagColors {
+    "DEFAULT" = "#64748b",
+    "ORANGE" = "#f97316",
+    "AMBER" = "#f59e0b",
+    "YELLOW" = "#facc15",
+    "RED" = "#ef4444",
+    "ROSE" = "#f43f5e",
+    "PINK" = "#ec4899",
+    "FUCHSIA" = "#d946ef",
+    "PURPLE" = "#a855f7",
+    "VIOLET" = "#8b5cf6",
+    "INDIGO" = "#6366f1",
+    "BLUE" = "#3b82f6",
+    "SKY" = "#0ea5e9",
+    "CYAN" = "#06b6d4",
+    "EMERALD" = "#10b981",
+    "GREEN" = "#22c55e",
+    "TEAL" = "#2dd4bf",
+    "LIME" = "#a3e635",
+}
 
 function Tag(props: Props) {
     if (props.isPreview) {
@@ -59,13 +79,6 @@ function Tag(props: Props) {
 }
 
 export default Tag;
-
-export enum TagColors {
-    "DEFAULT" = "#64748b",
-    "BLUE" = "#0ea5e9",
-    "ORANGE" = "#d97706 ",
-    "GREEN" = "#22c55e",
-}
 
 type TagIconProps =
     | {

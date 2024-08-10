@@ -1,7 +1,6 @@
 import Modal from "@/components/modal";
-import { TagColors, TagIcon } from "./tag/tag";
-import ColorPicker from "@/components/color-picker";
 import ChooseTag from "./tag/choose-tag";
+import { TagColors, TagIcon } from "./tag/tag";
 
 function CreateTodo() {
     return (
@@ -32,7 +31,6 @@ function ChooseTagsIcon() {
                 }
             >
                 <ChooseTag />
-                {/* <ColorPicker/> */}
             </Modal>
         </div>
     );
