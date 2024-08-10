@@ -66,8 +66,28 @@
     body {
         @apply bg-background text-foreground;
     }
-
-   
-   
 }
 
+.activee {
+    background: transparent;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+    position: relative;
+    outline: none;
+    border-radius: 50%;
+    box-shadow: rgb(156, 39, 176) 0px 0px 0px 3px inset;
+    transition: box-shadow 100ms;
+}
+
+.nonactive {
+    background: transparent;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+    position: relative;
+    outline: none;
+    border-radius: 50%;
+    box-shadow: rgb(103, 58, 183) 0px 0px 0px 15px inset;
+    transition: box-shadow 100ms;
+}
