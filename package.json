@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "npx tsx ./scripts/main.ts"
+    "seed": "npx tsx ./scripts/seed-db.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

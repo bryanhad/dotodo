@@ -35,7 +35,7 @@ import { Lucia } from "lucia";
         console.log('Successfully generated users seed data')
 
         const tagsSeed = await Promise.all(
-            dummyTags.map(async (tag): Promise<Tag> => {
+            dummyTags.map(async (tag): Promise<Omit<Tag, 'createdAt'>> => {
                 const randomUserIndex = getRandomNumberInRange(
                     0,
                     usersSeed.length-1,

@@ -1,6 +1,5 @@
 "use client";
 
-import SubmitButton from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -10,54 +9,24 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
-import { CreateTagFormValues, createTagSchema } from "@/lib/validation";
+import { createTagFormSchema, CreateTagFormValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle } from "lucide-react";
-import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { createTag } from "./action";
 import ChooseColorButton from "./choose-color-button";
 import { TagColors } from "./tag";
 
 type Props = {
-    currentLoggedInUserId: string;
+    onSubmit: (formValues: CreateTagFormValues) => void;
 };
 
-export function CreateTagButton({ currentLoggedInUserId }: Props) {
+export default function CreateTagForm({ onSubmit }: Props) {
     const [isClicked, setIsClicked] = useState(false);
 
-    const { toast } = useToast();
-    const { execute, result, isExecuting } = useAction(createTag, {
-        onError: ({ error: { serverError, validationErrors } }) => {
-            if (serverError) {
-                toast({
-                    variant: "destructive",
-                    title: serverError.title,
-                    description: serverError.description,
-                });
-            }
-            if (validationErrors) {
-                toast({
-                    variant: "destructive",
-                    title: "Invalid Input",
-                    description: "Please check your input",
-                });
-            }
-        },
-        onSuccess: ({ input }) => {
-            toast({
-                title: "Hooray!",
-                description: `Tag '${input.name}' has been added!`,
-            });
-        },
-    });
-
     const form = useForm<CreateTagFormValues>({
-        resolver: zodResolver(createTagSchema),
+        resolver: zodResolver(createTagFormSchema),
         defaultValues: {
-            authorId: currentLoggedInUserId,
             color: TagColors.DEFAULT,
             name: "",
         },
@@ -76,7 +45,7 @@ export function CreateTagButton({ currentLoggedInUserId }: Props) {
         <div>
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit(execute)}
+                    onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-2"
                 >
                     <div className="flex items-center gap-2">
@@ -88,12 +57,11 @@ export function CreateTagButton({ currentLoggedInUserId }: Props) {
                                 <FormItem className="flex-[1]">
                                     <FormControl>
                                         <Input
-                                            disabled={isExecuting}
                                             placeholder="Type new tag here"
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    {/* <FormMessage /> */}
                                 </FormItem>
                             )}
                         />
@@ -106,13 +74,10 @@ export function CreateTagButton({ currentLoggedInUserId }: Props) {
                         >
                             Cancel
                         </Button>
-                        <SubmitButton isLoading={isExecuting} type="submit">
-                            Add Tag
-                        </SubmitButton>
+                        <Button type="submit">Add Tag</Button>
                     </div>
                 </form>
-            </Form>{" "}
+            </Form>
         </div>
     );
 }
-

@@ -49,6 +49,7 @@ model Todo {
     createdBy User   @relation(references: [id], fields: [authorId], onDelete: Cascade)
     tagId     String
     tag       Tag    @relation(references: [id], fields: [tagId], onDelete: Cascade)
+    createdAt DateTime @default(now())
 
     @@map("todos")
 }
@@ -61,6 +62,7 @@ model Tag {
     authorId  String
     createdBy User   @relation(references: [id], fields: [authorId], onDelete: Cascade)
     todos     Todo[]
+    createdAt DateTime @default(now())
 
     @@map("tags")
 }

@@ -38,7 +38,7 @@ function ChooseColorButton({ form }: ChooseColorProps) {
             </div>
             <div className="flex gap-4">
                 <ColorPicker
-                    currentPickedHexColor={form.watch('color')}
+                    currentPickedHexColor={form.watch("color")}
                     onColorPicked={(hexColor) => {
                         form.setValue("color", hexColor);
                         // setOpenModal(false);
@@ -72,4 +72,4 @@ function ChooseColorButton({ form }: ChooseColorProps) {
     );
 }
 
-export default ChooseColorButton
+export default ChooseColorButton;

@@ -3,15 +3,15 @@
 import db from "@/lib/db";
 import { actionClient, CustomError } from "@/lib/safe-action";
 import { createTagSchema } from "@/lib/validation";
-import { generateIdFromEntropySize } from "lucia";
-import { flattenValidationErrors } from "next-safe-action";
+import { revalidatePath } from "next/cache";
 
 export const createTag = actionClient
-    .schema(createTagSchema, {
-        handleValidationErrorsShape: (validationErrors) =>
-            flattenValidationErrors(validationErrors).fieldErrors,
-    })
-    .action(async ({ parsedInput: { name, color, authorId } }) => {
+    .schema(createTagSchema)
+    .action(async ({ parsedInput }) => {
+        await new Promise((res) => setTimeout(res, 2000));
+
+        const { authorId, color, name, id } = parsedInput;
+
         const existingTag = await db.tag.findFirst({
             where: {
                 AND: [
@@ -21,17 +21,18 @@ export const createTag = actionClient
             },
         });
         if (existingTag) {
-            throw new CustomError(`Tag '${existingTag.name}' alreadt exists`);
+            throw new CustomError(`Tag '${existingTag.name}' already exists`);
         }
-
-        const newTagId = generateIdFromEntropySize(10); // 16 characters long
 
         await db.tag.create({
             data: {
-                id: newTagId,
+                id,
                 name,
                 color,
                 authorId: authorId,
             },
         });
+
+        revalidatePath("/");
+        return parsedInput;
     });
