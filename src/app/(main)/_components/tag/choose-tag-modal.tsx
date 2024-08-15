@@ -16,6 +16,7 @@ async function ChooseTagModal() {
         <Modal
             ariaDescription="create todo modal"
             title="Pick a tag for your todo"
+            desc="Tags are useful to group your todos"
             customButton={
                 <div className="flex gap-2 rounded-md bg-slate-500 p-2">
                     <TagIcon defaultColor={TagColors.ORANGE} />

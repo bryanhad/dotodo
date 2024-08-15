@@ -71,11 +71,12 @@ function Tag(props: Props) {
     if (props.isPreview) {
         return (
             <Button
+                tabIndex={-1}
                 type="button"
                 size={"sm"}
                 variant={"outline"}
                 className={cn(
-                    "flex w-full justify-start gap-2",
+                    "flex w-full justify-start gap-2 select-none",
                     { "hover:bg-transparent": props.isPreview },
                     props.className,
                 )}

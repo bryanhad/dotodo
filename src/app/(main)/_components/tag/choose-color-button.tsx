@@ -27,7 +27,7 @@ function ChooseColorButton({ form }: ChooseColorProps) {
             open={openModal}
             onOpenChange={setOpenModal}
             customButton={
-                <Button variant={"outline"} className="size-9 rounded-full p-0">
+                <Button tabIndex={-1} variant={"outline"} className="size-9 rounded-full p-0">
                     <TagIcon hexColor={form.watch("color")} />
                 </Button>
             }

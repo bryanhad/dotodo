@@ -12,16 +12,20 @@ import { Input } from "@/components/ui/input";
 import { createTagFormSchema, CreateTagFormValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import ChooseColorButton from "./choose-color-button";
 import { TagColors } from "./tag";
 
 type Props = {
     onSubmit: (formValues: CreateTagFormValues) => void;
+    formActionHasSuccessed: boolean;
 };
 
-export default function CreateTagForm({ onSubmit }: Props) {
+export default function CreateTagForm({
+    onSubmit,
+    formActionHasSuccessed,
+}: Props) {
     const [isClicked, setIsClicked] = useState(false);
 
     const form = useForm<CreateTagFormValues>({
@@ -31,6 +35,12 @@ export default function CreateTagForm({ onSubmit }: Props) {
             name: "",
         },
     });
+
+    useEffect(() => {
+        if (formActionHasSuccessed) {
+            form.reset();
+        }
+    }, [formActionHasSuccessed]);
 
     if (!isClicked) {
         return (
@@ -69,7 +79,10 @@ export default function CreateTagForm({ onSubmit }: Props) {
                     <div className="flex gap-2">
                         <Button
                             type="button"
-                            onClick={() => setIsClicked(false)}
+                            onClick={() => {
+                                setIsClicked(false);
+                                form.reset();
+                            }}
                             variant={"outline"}
                         >
                             Cancel

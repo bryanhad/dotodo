@@ -13,21 +13,24 @@ type Props = {
 };
 
 function TagListWithCreateButton({ fetchedTags }: Props) {
-    const { execute, optimisticState } = useOptimisticAction(createTagAction, {
-        currentState: fetchedTags,
-        updateFn: (currentState, newTag) => {
-            return [newTag, ...currentState];
+    const { execute, optimisticState, hasSucceeded } = useOptimisticAction(
+        createTagAction,
+        {
+            currentState: fetchedTags,
+            updateFn: (currentState, newTag) => {
+                return [newTag, ...currentState];
+            },
+            onError: ({ error }) => {
+                if (error.serverError) {
+                    toast({
+                        variant: "destructive",
+                        title: error.serverError.title,
+                        description: error.serverError.description,
+                    });
+                }
+            },
         },
-        onError: ({ error }) => {
-            if (error.serverError) {
-                toast({
-                    variant: "destructive",
-                    title: error.serverError.title,
-                    description: error.serverError.description,
-                });
-            }
-        },
-    });
+    );
 
     const { toast } = useToast();
 
@@ -49,6 +52,7 @@ function TagListWithCreateButton({ fetchedTags }: Props) {
                 </div>
             )}
             <CreateTagForm
+                formActionHasSuccessed={hasSucceeded}
                 onSubmit={(formValues) => {
                     const newTagId = generateIdFromEntropySize(10);
                     execute({

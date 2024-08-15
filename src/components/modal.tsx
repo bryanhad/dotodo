@@ -45,6 +45,7 @@ function Modal({
 
     return (
         <div
+            className="select-none"
             tabIndex={0}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
