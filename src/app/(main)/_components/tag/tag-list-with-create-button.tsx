@@ -4,7 +4,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { Tag as TagT } from "@prisma/client";
 import { generateIdFromEntropySize } from "lucia";
 import { useOptimisticAction } from "next-safe-action/hooks";
-import { useEffect } from "react";
 import { createTagAction } from "./action";
 import CreateTagForm from "./create-tag-form";
 import Tag from "./tag";
@@ -14,41 +13,44 @@ type Props = {
 };
 
 function TagListWithCreateButton({ fetchedTags }: Props) {
-    const { execute, optimisticState, result } = useOptimisticAction(
-        createTagAction,
-        {
-            currentState: fetchedTags,
-            updateFn: (currentState, newTag) => {
-                return [newTag, ...currentState];
-            },
+    const { execute, optimisticState } = useOptimisticAction(createTagAction, {
+        currentState: fetchedTags,
+        updateFn: (currentState, newTag) => {
+            return [newTag, ...currentState];
         },
-    );
+        onError: ({ error }) => {
+            if (error.serverError) {
+                toast({
+                    variant: "destructive",
+                    title: error.serverError.title,
+                    description: error.serverError.description,
+                });
+            }
+        },
+    });
 
     const { toast } = useToast();
 
-    useEffect(() => {
-        if (result.serverError) {
-            toast({
-                variant: "destructive",
-                title: result.serverError.title,
-                description: result.serverError.description,
-            });
-        }
-    }, [toast, result]);
-
     return (
-        <div className="space-y-4">
-            <ScrollArea className="h-40">
-                <div className="flex flex-col gap-2 p-1 pr-4">
-                    {optimisticState.map((tag) => (
-                        <Tag key={tag.id} {...tag} onDelete={(id) => {}} />
-                    ))}
+        <div className="space-y-6">
+            {fetchedTags.length ? (
+                <ScrollArea className="h-40">
+                    <div className="flex flex-col gap-2 p-1 pr-4">
+                        {optimisticState.map((tag) => (
+                            <Tag key={tag.id} {...tag} />
+                        ))}
+                    </div>
+                </ScrollArea>
+            ) : (
+                <div className="flex h-40 items-center justify-center">
+                    <p className="font-thin">
+                        You currently don&apos;t have any tags.
+                    </p>
                 </div>
-            </ScrollArea>
+            )}
             <CreateTagForm
                 onSubmit={(formValues) => {
                     const newTagId = generateIdFromEntropySize(10);
-                    const currentTime = new Date();
                     execute({
                         id: newTagId,
                         ...formValues,

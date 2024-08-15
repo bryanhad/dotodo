@@ -22,14 +22,10 @@ export const signInFormSchema = z.object({
 
 export type SignInFormValues = z.infer<typeof signInFormSchema>;
 
-export const tagActionSchema = z.object({
-    actionType: z.enum([''])
-})
-
 export const createTagActionSchema = z.object({
     id: stringRequired,
-    name: stringRequired.max(50),
-    color: stringRequired.max(255),
+    name: stringRequired.max(50, "Cannot exceed 50 characters"),
+    color: stringRequired.max(255, "Cannot exceed 255 characters"),
 });
 export const createTagFormSchema = z.object({
     name: stringRequired.max(50),
@@ -38,4 +34,10 @@ export const createTagFormSchema = z.object({
 
 export type CreateTagFormValues = z.infer<typeof createTagFormSchema>;
 
-export const deleteTagSchema = z.object({id: stringRequired})
+export const deleteTagSchema = z.object({ id: stringRequired });
+
+export const editTagSchema = z.object({
+    id: stringRequired,
+    name: z.string().max(50, "Cannot exceed 50 characters").optional(),
+    color: stringRequired.max(255, "Cannot exceed 255 characters").optional(),
+});

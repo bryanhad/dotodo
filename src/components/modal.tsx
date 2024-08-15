@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -12,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DialogProps } from "@radix-ui/react-dialog";
-import React from "react";
+import React, { useState } from "react";
 
 type BaseProps = {
     title?: string;
@@ -32,47 +34,63 @@ function Modal({
     desc,
     title,
     ariaDescription,
+    open: propsOpenState,
+    onOpenChange: propsSetOpenState,
     ...props
 }: Props) {
+    const [localOpen, setLocalOpen] = useState(false);
+
+    const openState = propsOpenState ? propsOpenState : localOpen;
+    const setOpenState = propsSetOpenState ? propsSetOpenState : setLocalOpen;
+
     return (
-        <Dialog {...props}>
-            {customButton && (
-                <DialogTrigger className="cursor-pointer" asChild>
-                    {customButton}
-                </DialogTrigger>
-            )}
-            {buttonText && (
-                <DialogTrigger className="cursor-pointer" asChild>
-                    <Button variant="outline">{buttonText}</Button>
-                </DialogTrigger>
-            )}
-            <DialogContent className="sm:max-w-md">
-                {title && (
-                    <DialogHeader>
-                        <DialogTitle>{title}</DialogTitle>
-                    </DialogHeader>
+        <div
+            tabIndex={0}
+            onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                    setOpenState(true);
+                }
+            }}
+        >
+            <Dialog open={openState} onOpenChange={setOpenState} {...props}>
+                {customButton && (
+                    <DialogTrigger className="cursor-pointer" asChild>
+                        {customButton}
+                    </DialogTrigger>
                 )}
-
-                {desc && (
-                    <DialogHeader>
-                        <DialogDescription>{desc}</DialogDescription>
-                    </DialogHeader>
+                {buttonText && (
+                    <DialogTrigger className="cursor-pointer" asChild>
+                        <Button variant="outline">{buttonText}</Button>
+                    </DialogTrigger>
                 )}
+                <DialogContent className="sm:max-w-md">
+                    {title && (
+                        <DialogHeader>
+                            <DialogTitle>{title}</DialogTitle>
+                        </DialogHeader>
+                    )}
 
-                {children}
-                <DialogDescription
-                    aria-describedby={ariaDescription}
-                    hidden
-                ></DialogDescription>
-                <DialogFooter className="sm:justify-start">
-                    <DialogClose asChild>
-                        <Button type="button" variant="secondary">
-                            Close
-                        </Button>
-                    </DialogClose>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+                    {desc && (
+                        <DialogHeader>
+                            <DialogDescription>{desc}</DialogDescription>
+                        </DialogHeader>
+                    )}
+
+                    {children}
+                    <DialogDescription
+                        aria-describedby={ariaDescription}
+                        hidden
+                    ></DialogDescription>
+                    <DialogFooter className="sm:justify-start">
+                        <DialogClose asChild>
+                            <Button type="button" variant="secondary">
+                                Close
+                            </Button>
+                        </DialogClose>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </div>
     );
 }
 

@@ -46,7 +46,7 @@ export default function CreateTagForm({ onSubmit }: Props) {
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-2"
+                    className="flex gap-2"
                 >
                     <div className="flex items-center gap-2">
                         <ChooseColorButton form={form} />
@@ -66,7 +66,7 @@ export default function CreateTagForm({ onSubmit }: Props) {
                             )}
                         />
                     </div>
-                    <div className="space-x-2">
+                    <div className="flex gap-2">
                         <Button
                             type="button"
                             onClick={() => setIsClicked(false)}

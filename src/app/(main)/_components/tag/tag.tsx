@@ -2,6 +2,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Tag as TagT } from "@prisma/client";
 import { Trash2 } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { deleteTagAction, editTagAction } from "./action";
+import { useToast } from "@/components/ui/use-toast";
+import SubmitButton from "@/components/submit-button";
 
 type BaseProps = Pick<TagT, "color" | "name"> & {
     className?: string;
@@ -13,7 +17,6 @@ type PreviewProps = BaseProps & { isPreview: true };
 type NonPreviewProps = BaseProps & {
     isPreview?: false;
     id: string;
-    onDelete: (tagId: string) => void;
 };
 
 type Props = PreviewProps | NonPreviewProps;
@@ -40,6 +43,31 @@ export enum TagColors {
 }
 
 function Tag(props: Props) {
+    const { toast } = useToast();
+    const { execute: executeDeleteTag, isExecuting: isExecutingDeleteTag } =
+        useAction(deleteTagAction, {
+            onSuccess: ({ data }) => {
+                if (data?.name)
+                    [toast({ title: `Tag '${data.name}' has been removed` })];
+            },
+            onError: ({ error: { serverError } }) => {
+                if (serverError) {
+                    toast({ variant: "destructive", ...serverError });
+                }
+            },
+        });
+    const { execute: executeEditTag, isExecuting: isExecutingEditTag } =
+        useAction(editTagAction, {
+            onSuccess: () => {
+                toast({ title: `Tag has been updated` });
+            },
+            onError: ({ error: { serverError } }) => {
+                if (serverError) {
+                    toast({ variant: "destructive", ...serverError });
+                }
+            },
+        });
+
     if (props.isPreview) {
         return (
             <Button
@@ -73,14 +101,16 @@ function Tag(props: Props) {
                     {props.name}
                 </div>
                 <div className="p-1">
-                    <Button
+                    <SubmitButton
+                        icon
+                        isLoading={isExecutingDeleteTag}
                         size={"sm"}
                         className=""
                         variant={"outline"}
-                        onClick={() => props.onDelete(props.id)}
+                        onClick={() => executeDeleteTag({ id: props.id })}
                     >
                         <Trash2 className="shrink-0" size={14} />
-                    </Button>
+                    </SubmitButton>
                 </div>
             </div>
         </Button>

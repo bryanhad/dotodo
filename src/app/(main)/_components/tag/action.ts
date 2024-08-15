@@ -2,11 +2,14 @@
 
 import db from "@/lib/db";
 import {
-    actionClient,
     ActionError,
-    authenticatedActionClient,
+    authenticatedActionClient
 } from "@/lib/safe-action";
-import { createTagActionSchema, deleteTagSchema } from "@/lib/validation";
+import {
+    createTagActionSchema,
+    deleteTagSchema,
+    editTagSchema,
+} from "@/lib/validation";
 import { revalidatePath } from "next/cache";
 
 export const createTagAction = authenticatedActionClient
@@ -21,6 +24,7 @@ export const createTagAction = authenticatedActionClient
                 ],
             },
         });
+
         if (existingTag) {
             throw new ActionError(
                 `Tag '${existingTag.name}' already exists`,
@@ -39,10 +43,50 @@ export const createTagAction = authenticatedActionClient
         return parsedInput;
     });
 
-export const deleteTag = actionClient
+export const deleteTagAction = authenticatedActionClient
+    .metadata({actionName: "delete tag"})
     .schema(deleteTagSchema)
-    .action(async ({ parsedInput: { id } }) => {
-        await db.tag.delete({
-            where: { id },
+    .action(async ({ parsedInput, ctx: { user } }) => {
+        const toBeDeletedTag = await db.tag.findFirst({
+            where: { AND: [{ id: parsedInput.id }, { authorId: user.id }] },
         });
+
+        if (!toBeDeletedTag) {
+            throw new ActionError(
+                "Tag id is not found",
+                "Failed to delete tag",
+            );
+        }
+
+        await db.tag.delete({ where: { id: parsedInput.id } });
+
+        revalidatePath("/");
+        return toBeDeletedTag;
+    });
+
+export const editTagAction = authenticatedActionClient
+    .schema(editTagSchema)
+    .action(async ({ parsedInput, ctx: { user } }) => {
+        const tobeUpdatedTag = await db.tag.findFirst({
+            where: { AND: [{ id: parsedInput.id }, { authorId: user.id }] },
+        });
+
+        await new Promise(res => setTimeout(res, 2000))
+
+        if (!tobeUpdatedTag) {
+            throw new ActionError(
+                "Tag id is not found",
+                "Failed to update tag",
+            );
+        }
+
+        await db.tag.update({
+            where: { id: parsedInput.id },
+            data: {
+                ...(parsedInput.name && { name: parsedInput.name }),
+                ...(parsedInput.color && { color: parsedInput.color }),
+            },
+        });
+
+        revalidatePath("/");
     });
