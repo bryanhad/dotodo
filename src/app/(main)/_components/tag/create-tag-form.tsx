@@ -38,7 +38,7 @@ export default function CreateTagForm({
 
     useEffect(() => {
         if (formActionHasSuccessed) {
-            form.reset();
+            form.resetField('name');
         }
     }, [formActionHasSuccessed]);
 
