@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Tag as TagT } from "@prisma/client";
@@ -6,6 +8,9 @@ import { useAction } from "next-safe-action/hooks";
 import { deleteTagAction, editTagAction } from "./action";
 import { useToast } from "@/components/ui/use-toast";
 import SubmitButton from "@/components/submit-button";
+import { useState } from "react";
+import EditTagForm from "./edit-tag-form";
+import { TagColors } from "./lib";
 
 type BaseProps = Pick<TagT, "color" | "name"> & {
     className?: string;
@@ -21,45 +26,14 @@ type NonPreviewProps = BaseProps & {
 
 type Props = PreviewProps | NonPreviewProps;
 
-export enum TagColors {
-    "DEFAULT" = "#64748b",
-    "ORANGE" = "#f97316",
-    "AMBER" = "#f59e0b",
-    "YELLOW" = "#facc15",
-    "RED" = "#ef4444",
-    "ROSE" = "#f43f5e",
-    "PINK" = "#ec4899",
-    "FUCHSIA" = "#d946ef",
-    "PURPLE" = "#a855f7",
-    "VIOLET" = "#8b5cf6",
-    "INDIGO" = "#6366f1",
-    "BLUE" = "#3b82f6",
-    "SKY" = "#0ea5e9",
-    "CYAN" = "#06b6d4",
-    "EMERALD" = "#10b981",
-    "GREEN" = "#22c55e",
-    "TEAL" = "#2dd4bf",
-    "LIME" = "#a3e635",
-}
-
 function Tag(props: Props) {
+    const [isEditing, setIsEditing] = useState(false);
     const { toast } = useToast();
     const { execute: executeDeleteTag, isExecuting: isExecutingDeleteTag } =
         useAction(deleteTagAction, {
             onSuccess: ({ data }) => {
                 if (data?.name)
                     [toast({ title: `Tag '${data.name}' has been removed` })];
-            },
-            onError: ({ error: { serverError } }) => {
-                if (serverError) {
-                    toast({ variant: "destructive", ...serverError });
-                }
-            },
-        });
-    const { execute: executeEditTag, isExecuting: isExecutingEditTag } =
-        useAction(editTagAction, {
-            onSuccess: () => {
-                toast({ title: `Tag has been updated` });
             },
             onError: ({ error: { serverError } }) => {
                 if (serverError) {
@@ -76,7 +50,7 @@ function Tag(props: Props) {
                 size={"sm"}
                 variant={"outline"}
                 className={cn(
-                    "flex w-full justify-start gap-2 select-none",
+                    "flex w-full select-none justify-start gap-2",
                     { "hover:bg-transparent": props.isPreview },
                     props.className,
                 )}
@@ -93,25 +67,40 @@ function Tag(props: Props) {
             variant={"ghost"}
             className={cn(
                 "flex w-full items-center justify-between gap-4",
+                {'pl-1': isEditing},
                 props.className,
             )}
         >
             <div tabIndex={0} role="button" title="delete tag">
-                <div className="flex items-center gap-4">
-                    <TagIcon hexColor={props.color} />
-                    {props.name}
-                </div>
-                <div className="p-1">
-                    <SubmitButton
-                        icon
-                        isLoading={isExecutingDeleteTag}
-                        size={"sm"}
-                        className=""
-                        variant={"outline"}
-                        onClick={() => executeDeleteTag({ id: props.id })}
-                    >
-                        <Trash2 className="shrink-0" size={14} />
-                    </SubmitButton>
+                {!isEditing && (
+                    <div className="flex items-center gap-4">
+                        <TagIcon hexColor={props.color} />
+                        {props.name}
+                    </div>
+                )}
+                <div className="flex gap-2 items-center">
+                    <EditTagForm
+                        isEditing={isEditing}
+                        setIsEditing={setIsEditing}
+                        tag={{
+                            color: props.color,
+                            id: props.id,
+                            name: props.name,
+                        }}
+                    />
+                    {/* DELETE TAG BUTTON */}
+                    {!isEditing && (
+                        <SubmitButton
+                            icon
+                            isLoading={isExecutingDeleteTag}
+                            size={"sm"}
+                            className=""
+                            variant={"outline"}
+                            onClick={() => executeDeleteTag({ id: props.id })}
+                        >
+                            <Trash2 className="shrink-0" size={14} />
+                        </SubmitButton>
+                    )}
                 </div>
             </div>
         </Button>
@@ -141,7 +130,7 @@ export function TagIcon({
         <div
             className={cn(
                 // if there is no hexColor argument, use defaultColor
-                "size-3 rounded-full",
+                "size-3 rounded-full select-none",
                 className,
             )}
             style={{ backgroundColor: hexColor ?? defaultColor }}

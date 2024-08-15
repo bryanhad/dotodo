@@ -41,3 +41,6 @@ export const editTagSchema = z.object({
     name: z.string().max(50, "Cannot exceed 50 characters").optional(),
     color: stringRequired.max(255, "Cannot exceed 255 characters").optional(),
 });
+
+
+export type EditTagFormValues = z.infer<typeof editTagSchema>;

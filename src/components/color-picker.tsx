@@ -1,6 +1,6 @@
 "use client";
 
-import { TagColors } from "@/app/(main)/_components/tag/tag";
+import { TagColors } from "@/app/(main)/_components/tag/lib";
 import { useState } from "react";
 
 type Props = {

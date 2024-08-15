@@ -6,17 +6,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CreateTagFormValues } from "@/lib/validation";
 import { useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { SetValueConfig, UseFormReturn } from "react-hook-form";
 import Tag, { TagIcon } from "./tag";
 
-type ChooseColorProps = {
-    form: UseFormReturn<CreateTagFormValues>;
+type Props = {
+    formColorValueState: string;
+    initialFormColorValue: string;
+    onColorPicked: (hexColor: string) => void;
+    onCustomColorInputChange: (hexCode: string) => void;
 };
 
-function ChooseColorButton({ form }: ChooseColorProps) {
+function ChooseColorButton({
+    formColorValueState,
+    initialFormColorValue,
+    onColorPicked,
+    onCustomColorInputChange,
+}: Props) {
     const [openModal, setOpenModal] = useState(false);
     const [customColor, setCustomColor] = useState(
-        form.getValues("color").substring(1),
+        initialFormColorValue.substring(1),
     );
 
     return (
@@ -27,20 +35,24 @@ function ChooseColorButton({ form }: ChooseColorProps) {
             open={openModal}
             onOpenChange={setOpenModal}
             customButton={
-                <Button tabIndex={-1} variant={"outline"} className="size-9 rounded-full p-0">
-                    <TagIcon hexColor={form.watch("color")} />
+                <Button
+                    tabIndex={-1}
+                    variant={"outline"}
+                    className="size-9 rounded-full p-0"
+                >
+                    <TagIcon hexColor={formColorValueState} />
                 </Button>
             }
         >
             <div className="space-y-2">
                 <p className="text-[12px] font-light italic">preview</p>
-                <Tag isPreview color={form.watch("color")} name="example-tag" />
+                <Tag isPreview color={formColorValueState} name="example-tag" />
             </div>
             <div className="flex gap-4">
                 <ColorPicker
-                    currentPickedHexColor={form.watch("color")}
+                    currentPickedHexColor={formColorValueState}
                     onColorPicked={(hexColor) => {
-                        form.setValue("color", hexColor);
+                        onColorPicked(hexColor);
                         // setOpenModal(false);
                     }}
                 />
@@ -57,14 +69,14 @@ function ChooseColorButton({ form }: ChooseColorProps) {
                                     "",
                                 );
                                 setCustomColor(hexCode);
-                                form.setValue("color", "#" + hexCode);
+                                onCustomColorInputChange(hexCode);
                             }}
                             value={customColor}
                         />
                     </div>
                     <div
                         className="flex-[1] rounded-md border border-input"
-                        style={{ backgroundColor: form.watch("color") }}
+                        style={{ backgroundColor: formColorValueState }}
                     />
                 </div>
             </div>

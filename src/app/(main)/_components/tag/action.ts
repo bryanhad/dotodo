@@ -65,6 +65,7 @@ export const deleteTagAction = authenticatedActionClient
     });
 
 export const editTagAction = authenticatedActionClient
+    .metadata({actionName: 'edit tag'})
     .schema(editTagSchema)
     .action(async ({ parsedInput, ctx: { user } }) => {
         const tobeUpdatedTag = await db.tag.findFirst({

@@ -1,7 +1,8 @@
 import { mustAuthenticated } from "@/auth";
 import Modal from "@/components/modal";
 import db from "@/lib/db";
-import { TagColors, TagIcon } from "./tag";
+import { TagIcon } from "./tag";
+import { TagColors } from './lib' 
 import TagListWithCreateButton from "./tag-list-with-create-button";
 
 async function ChooseTagModal() {
