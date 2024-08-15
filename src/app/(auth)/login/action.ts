@@ -6,7 +6,7 @@ import { flattenValidationErrors } from "next-safe-action";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import db from "@/lib/db";
-import { actionClient, CustomError } from "@/lib/safe-action";
+import { actionClient, ActionError } from "@/lib/safe-action";
 import { signInFormSchema } from "@/lib/validation";
 import { argonHashOptionConfig } from "@/lib/utils";
 
@@ -18,10 +18,10 @@ export const signIn = actionClient
   .action(async ({ parsedInput: { email, password } }) => {
     const existingUser = await db.user.findUnique({ where: { email } });
     if (!existingUser) {
-      throw new CustomError("No user with this email");
+      throw new ActionError("No user with this email");
     }
     if (!existingUser.passwordHash) {
-      throw new CustomError("This user uses google login!");
+      throw new ActionError("This user uses google login!");
     }
     const validPassword = await verify(
       existingUser.passwordHash,
@@ -29,7 +29,7 @@ export const signIn = actionClient
       argonHashOptionConfig,
     );
     if (!validPassword) {
-      throw new CustomError("Incorrect email or password");
+      throw new ActionError("Incorrect email or password");
     }
 
     const session = await lucia.createSession(existingUser.id, {});

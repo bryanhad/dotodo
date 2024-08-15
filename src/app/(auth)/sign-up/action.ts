@@ -2,7 +2,7 @@
 
 import { lucia } from "@/auth";
 import db from "@/lib/db";
-import { actionClient, CustomError } from "@/lib/safe-action";
+import { actionClient, ActionError } from "@/lib/safe-action";
 import { argonHashOptionConfig } from "@/lib/utils";
 import { signUpFormSchema } from "@/lib/validation";
 import { hash } from "@node-rs/argon2";
@@ -21,7 +21,7 @@ export const signUp = actionClient
       where: { email: { equals: email, mode: "insensitive" } },
     });
     if (existingUser) {
-      throw new CustomError("Email has been taken");
+      throw new ActionError("Email has been taken");
     }
 
     const passwordHash = await hash(password, argonHashOptionConfig);
