@@ -52,7 +52,7 @@ function ColorBlob({
             <div
                 title={colorName.toLowerCase()}
                 tabIndex={0}
-                className="focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+                className="focus-visible:border-2 focus-visible:outline focus-visible:outline-2 dark:focus-visible:border-none dark:focus-visible:outline-white"
                 style={{
                     userSelect: "none",
                     background: "transparent",

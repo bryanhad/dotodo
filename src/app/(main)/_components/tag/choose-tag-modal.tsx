@@ -4,6 +4,7 @@ import db from "@/lib/db";
 import { TagIcon } from "./tag";
 import { TagColors } from './lib' 
 import TagListWithCreateButton from "./tag-list-with-create-button";
+import { Button } from "@/components/ui/button";
 
 async function ChooseTagModal() {
     const {user} = await mustAuthenticated()
@@ -19,11 +20,11 @@ async function ChooseTagModal() {
             title="Pick a tag for your todo"
             desc="Tags are useful to group your todos"
             customButton={
-                <div className="flex gap-2 rounded-md bg-slate-500 p-2">
+                <Button variant={'ghost'} className="flex gap-2 rounded-md p-2">
                     <TagIcon defaultColor={TagColors.ORANGE} />
                     <TagIcon defaultColor={TagColors.BLUE} />
                     <TagIcon defaultColor={TagColors.GREEN} />
-                </div>
+                </Button>
             }
         >
             <TagListWithCreateButton
