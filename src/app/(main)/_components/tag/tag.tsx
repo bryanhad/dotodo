@@ -9,8 +9,12 @@ type BaseProps = Pick<TagT, "color" | "name"> & {
 };
 
 type PreviewProps = BaseProps & { isPreview: true };
-type NonPreviewProps = BaseProps &
-    Omit<TagT, "color" | "name"> & { isPreview?: false };
+
+type NonPreviewProps = BaseProps & {
+    isPreview?: false;
+    id: string;
+    onDelete: (tagId: string) => void;
+};
 
 type Props = PreviewProps | NonPreviewProps;
 
@@ -63,13 +67,18 @@ function Tag(props: Props) {
                 props.className,
             )}
         >
-            <div tabIndex={0} role="button" aria-describedby="">
+            <div tabIndex={0} role="button" title="delete tag">
                 <div className="flex items-center gap-4">
                     <TagIcon hexColor={props.color} />
                     {props.name}
                 </div>
                 <div className="p-1">
-                    <Button size={"sm"} className="" variant={"outline"}>
+                    <Button
+                        size={"sm"}
+                        className=""
+                        variant={"outline"}
+                        onClick={() => props.onDelete(props.id)}
+                    >
                         <Trash2 className="shrink-0" size={14} />
                     </Button>
                 </div>

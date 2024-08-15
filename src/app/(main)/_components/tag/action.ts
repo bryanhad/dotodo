@@ -1,38 +1,48 @@
 "use server";
 
 import db from "@/lib/db";
-import { actionClient, CustomError } from "@/lib/safe-action";
-import { createTagSchema } from "@/lib/validation";
+import {
+    actionClient,
+    ActionError,
+    authenticatedActionClient,
+} from "@/lib/safe-action";
+import { createTagActionSchema, deleteTagSchema } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
 
-export const createTag = actionClient
-    .schema(createTagSchema)
-    .action(async ({ parsedInput }) => {
-        await new Promise((res) => setTimeout(res, 2000));
-
-        const { authorId, color, name, id } = parsedInput;
-
+export const createTagAction = authenticatedActionClient
+    .metadata({ actionName: "create tag" })
+    .schema(createTagActionSchema)
+    .action(async ({ parsedInput, ctx: { user } }) => {
         const existingTag = await db.tag.findFirst({
             where: {
                 AND: [
-                    { authorId },
-                    { name: { equals: name, mode: "insensitive" } },
+                    { authorId: user.id },
+                    { name: { equals: parsedInput.name, mode: "insensitive" } },
                 ],
             },
         });
         if (existingTag) {
-            throw new CustomError(`Tag '${existingTag.name}' already exists`);
+            throw new ActionError(
+                `Tag '${existingTag.name}' already exists`,
+                "Failed to add new tag",
+            );
         }
 
         await db.tag.create({
             data: {
-                id,
-                name,
-                color,
-                authorId: authorId,
+                ...parsedInput,
+                authorId: user.id,
             },
         });
 
         revalidatePath("/");
         return parsedInput;
+    });
+
+export const deleteTag = actionClient
+    .schema(deleteTagSchema)
+    .action(async ({ parsedInput: { id } }) => {
+        await db.tag.delete({
+            where: { id },
+        });
     });

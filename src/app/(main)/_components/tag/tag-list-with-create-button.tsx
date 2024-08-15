@@ -1,25 +1,21 @@
 "use client";
 import ScrollArea from "@/components/scroll-area";
+import { useToast } from "@/components/ui/use-toast";
 import { Tag as TagT } from "@prisma/client";
 import { generateIdFromEntropySize } from "lucia";
 import { useOptimisticAction } from "next-safe-action/hooks";
-import { createTag } from "./action";
+import { useEffect } from "react";
+import { createTagAction } from "./action";
 import CreateTagForm from "./create-tag-form";
 import Tag from "./tag";
-import { useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
 
 type Props = {
-    fetchedTags: TagT[];
-    currentLoggedInUserId: string;
+    fetchedTags: Omit<TagT, "authorId" | "createdAt">[];
 };
 
-function TagListWithCreateButton({
-    fetchedTags,
-    currentLoggedInUserId,
-}: Props) {
-    const { execute, optimisticState, hasErrored } = useOptimisticAction(
-        createTag,
+function TagListWithCreateButton({ fetchedTags }: Props) {
+    const { execute, optimisticState, result } = useOptimisticAction(
+        createTagAction,
         {
             currentState: fetchedTags,
             updateFn: (currentState, newTag) => {
@@ -27,19 +23,25 @@ function TagListWithCreateButton({
             },
         },
     );
+
     const { toast } = useToast();
+
     useEffect(() => {
-        if (hasErrored) {
-            toast({ variant: "destructive", title: "Failed to add new tag" });
+        if (result.serverError) {
+            toast({
+                variant: "destructive",
+                title: result.serverError.title,
+                description: result.serverError.description,
+            });
         }
-    }, [hasErrored, toast]);
+    }, [toast, result]);
 
     return (
         <div className="space-y-4">
             <ScrollArea className="h-40">
                 <div className="flex flex-col gap-2 p-1 pr-4">
                     {optimisticState.map((tag) => (
-                        <Tag key={tag.id} {...tag} />
+                        <Tag key={tag.id} {...tag} onDelete={(id) => {}} />
                     ))}
                 </div>
             </ScrollArea>
@@ -49,11 +51,8 @@ function TagListWithCreateButton({
                     const currentTime = new Date();
                     execute({
                         id: newTagId,
-                        authorId: currentLoggedInUserId,
-                        createdAt: currentTime,
                         ...formValues,
                     });
-                    toast({ title: "New tag has been added" });
                 }}
             />
         </div>

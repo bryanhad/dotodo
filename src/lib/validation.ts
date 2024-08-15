@@ -22,10 +22,12 @@ export const signInFormSchema = z.object({
 
 export type SignInFormValues = z.infer<typeof signInFormSchema>;
 
-export const createTagSchema = z.object({
-    createdAt: z.date(),
+export const tagActionSchema = z.object({
+    actionType: z.enum([''])
+})
+
+export const createTagActionSchema = z.object({
     id: stringRequired,
-    authorId: stringRequired,
     name: stringRequired.max(50),
     color: stringRequired.max(255),
 });
@@ -35,3 +37,5 @@ export const createTagFormSchema = z.object({
 });
 
 export type CreateTagFormValues = z.infer<typeof createTagFormSchema>;
+
+export const deleteTagSchema = z.object({id: stringRequired})

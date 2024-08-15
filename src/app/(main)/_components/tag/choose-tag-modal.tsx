@@ -1,15 +1,11 @@
-import { validateRequest } from "@/auth";
+import { mustAuthenticated } from "@/auth";
 import Modal from "@/components/modal";
 import db from "@/lib/db";
 import { TagColors, TagIcon } from "./tag";
 import TagListWithCreateButton from "./tag-list-with-create-button";
 
 async function ChooseTagModal() {
-    const { user } = await validateRequest();
-
-    if (!user) {
-        throw new Error("no User??");
-    }
+    const {user} = await mustAuthenticated()
 
     const tags = await db.tag.findMany({
         where: { authorId: user.id },
@@ -29,7 +25,6 @@ async function ChooseTagModal() {
             }
         >
             <TagListWithCreateButton
-                currentLoggedInUserId={user.id}
                 fetchedTags={tags}
             />
         </Modal>
