@@ -49,6 +49,15 @@ export const validateRequest = cache(
     }
 )
 
+export const mustAuthenticated = cache(async () => {
+    const res = await validateRequest();
+    if (!res.user) {
+        throw new Error("Authentication Error");
+    }
+    return res;
+});
+
+
 declare module "lucia" {
     interface Register {
         Lucia: typeof lucia
