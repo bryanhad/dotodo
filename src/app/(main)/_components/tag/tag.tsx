@@ -22,6 +22,7 @@ type PreviewProps = BaseProps & { isPreview: true };
 type NonPreviewProps = BaseProps & {
     isPreview?: false;
     id: string;
+    onClick: (tagId: string) => void;
 };
 
 type Props = PreviewProps | NonPreviewProps;
@@ -63,11 +64,12 @@ function Tag(props: Props) {
 
     return (
         <Button
+            onClick={() => props.onClick(props.id)}
             asChild
             variant={"ghost"}
             className={cn(
                 "flex w-full items-center justify-between gap-4",
-                {'pl-1': isEditing},
+                { "pl-1": isEditing },
                 props.className,
             )}
         >
@@ -78,7 +80,7 @@ function Tag(props: Props) {
                         {props.name}
                     </div>
                 )}
-                <div className="flex gap-2 items-center">
+                <div className="flex items-center gap-2">
                     <EditTagForm
                         isEditing={isEditing}
                         setIsEditing={setIsEditing}
@@ -130,7 +132,7 @@ export function TagIcon({
         <div
             className={cn(
                 // if there is no hexColor argument, use defaultColor
-                "size-3 rounded-full select-none",
+                "size-3 select-none rounded-full",
                 className,
             )}
             style={{ backgroundColor: hexColor ?? defaultColor }}

@@ -10,9 +10,10 @@ import Tag from "./tag";
 
 type Props = {
     fetchedTags: Omit<TagT, "authorId" | "createdAt">[];
+    onChooseTag: (tagId:string) => void
 };
 
-function TagListWithCreateButton({ fetchedTags }: Props) {
+function TagListWithCreateButton({ fetchedTags, onChooseTag }: Props) {
     const { execute, optimisticState, hasSucceeded } = useOptimisticAction(
         createTagAction,
         {
@@ -40,7 +41,7 @@ function TagListWithCreateButton({ fetchedTags }: Props) {
                 <ScrollArea className="h-40">
                     <div className="flex flex-col gap-2 p-1 pr-4">
                         {optimisticState.map((tag) => (
-                            <Tag key={tag.id} {...tag} />
+                            <Tag onClick={onChooseTag} key={tag.id} {...tag} />
                         ))}
                     </div>
                 </ScrollArea>

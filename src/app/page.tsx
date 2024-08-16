@@ -11,15 +11,15 @@ export default async function Home() {
     return (
         <div className="space-y-4 p-6">
             <div className="grid grid-cols-2 gap-6">
-                {!user && (
-                    <AuthModal title="Sign Up">
-                        <SignUpForm />
-                    </AuthModal>
-                )}
                 {!user ? (
-                    <AuthModal title="Sign In">
-                        <SignInForm />
-                    </AuthModal>
+                    <>
+                        <AuthModal title="Sign Up">
+                            <SignUpForm />
+                        </AuthModal>
+                        <AuthModal title="Sign In">
+                            <SignInForm />
+                        </AuthModal>
+                    </>
                 ) : (
                     <>
                         <CreateTodo />
