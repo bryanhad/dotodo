@@ -7,8 +7,8 @@ import {
 } from "@/lib/safe-action";
 import {
     createTagActionSchema,
-    deleteTagSchema,
-    editTagSchema,
+    deleteTagActionSchema,
+    editTagActionSchema,
 } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
 
@@ -45,7 +45,7 @@ export const createTagAction = authenticatedActionClient
 
 export const deleteTagAction = authenticatedActionClient
     .metadata({actionName: "delete tag"})
-    .schema(deleteTagSchema)
+    .schema(deleteTagActionSchema)
     .action(async ({ parsedInput, ctx: { user } }) => {
         const toBeDeletedTag = await db.tag.findFirst({
             where: { AND: [{ id: parsedInput.id }, { authorId: user.id }] },
@@ -66,7 +66,7 @@ export const deleteTagAction = authenticatedActionClient
 
 export const editTagAction = authenticatedActionClient
     .metadata({actionName: 'edit tag'})
-    .schema(editTagSchema)
+    .schema(editTagActionSchema)
     .action(async ({ parsedInput, ctx: { user } }) => {
         const tobeUpdatedTag = await db.tag.findFirst({
             where: { AND: [{ id: parsedInput.id }, { authorId: user.id }] },

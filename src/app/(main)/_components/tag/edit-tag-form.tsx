@@ -1,18 +1,18 @@
 "use client";
 
+import SubmitButton from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { EditTagFormValues, editTagSchema } from "@/lib/validation";
+import { useToast } from "@/components/ui/use-toast";
+import { EditTagFormValues, editTagActionSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Tag } from "@prisma/client";
-import { CheckCheckIcon, CheckCircle, CheckIcon, PencilIcon, X } from "lucide-react";
-import { useForm } from "react-hook-form";
-import ChooseColorButton from "./choose-color-button";
+import { CheckIcon, PencilIcon, X } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
+import { useForm } from "react-hook-form";
 import { editTagAction } from "./action";
-import { useToast } from "@/components/ui/use-toast";
-import SubmitButton from "@/components/submit-button";
+import ChooseColorButton from "./choose-color-button";
 
 type Props = {
     tag: Pick<Tag, "id" | "color" | "name">;
@@ -37,7 +37,7 @@ function EditTagForm({ tag, isEditing, setIsEditing }: Props) {
         });
 
     const form = useForm<EditTagFormValues>({
-        resolver: zodResolver(editTagSchema),
+        resolver: zodResolver(editTagActionSchema),
         defaultValues: {
             id: tag.id,
             color: tag.color,

@@ -1,14 +1,16 @@
 "use client";
 
+import SubmitButton from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import { CreateTodoActionFormValues } from "@/lib/validation";
 import { Tag as TagT } from "@prisma/client";
 import { Trash2 } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
-import { deleteTagAction, editTagAction } from "./action";
-import { useToast } from "@/components/ui/use-toast";
-import SubmitButton from "@/components/submit-button";
 import { useState } from "react";
+import { useFormContext } from "react-hook-form";
+import { deleteTagAction } from "./action";
 import EditTagForm from "./edit-tag-form";
 import { TagColors } from "./lib";
 
@@ -22,7 +24,6 @@ type PreviewProps = BaseProps & { isPreview: true };
 type NonPreviewProps = BaseProps & {
     isPreview?: false;
     id: string;
-    onClick: (tagId: string) => void;
 };
 
 type Props = PreviewProps | NonPreviewProps;
@@ -30,6 +31,8 @@ type Props = PreviewProps | NonPreviewProps;
 function Tag(props: Props) {
     const [isEditing, setIsEditing] = useState(false);
     const { toast } = useToast();
+    const todoForm = useFormContext<CreateTodoActionFormValues>();
+
     const { execute: executeDeleteTag, isExecuting: isExecutingDeleteTag } =
         useAction(deleteTagAction, {
             onSuccess: ({ data }) => {
@@ -64,23 +67,30 @@ function Tag(props: Props) {
 
     return (
         <Button
-            onClick={() => props.onClick(props.id)}
             asChild
             variant={"ghost"}
             className={cn(
-                "flex w-full items-center justify-between gap-4",
+                "flex w-full items-center justify-between p-0",
                 { "pl-1": isEditing },
                 props.className,
             )}
         >
-            <div tabIndex={0} role="button" title="delete tag">
+            <div className="flex gap-4">
                 {!isEditing && (
-                    <div className="flex items-center gap-4">
+                    <div
+                        tabIndex={0}
+                        className="flex h-full flex-[1] items-center gap-4 rounded-l-md pl-4"
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                todoForm.setValue("tagId", props.id);
+                            }
+                        }}
+                    >
                         <TagIcon hexColor={props.color} />
                         {props.name}
                     </div>
                 )}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 pr-4">
                     <EditTagForm
                         isEditing={isEditing}
                         setIsEditing={setIsEditing}

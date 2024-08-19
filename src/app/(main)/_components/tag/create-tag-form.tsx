@@ -34,7 +34,7 @@ export default function CreateTagForm({
         if (formActionHasSuccessed) {
             form.resetField("name");
         }
-    }, [formActionHasSuccessed]);
+    }, [formActionHasSuccessed, form]);
 
     if (!isClicked) {
         return (

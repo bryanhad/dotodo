@@ -1,3 +1,4 @@
+import { createPostponedAbortSignal } from "next/dist/server/app-render/dynamic-rendering";
 import { z } from "zod";
 
 const stringRequired = z.string().min(1, "Required");
@@ -34,13 +35,21 @@ export const createTagFormSchema = z.object({
 
 export type CreateTagFormValues = z.infer<typeof createTagFormSchema>;
 
-export const deleteTagSchema = z.object({ id: stringRequired });
+export const deleteTagActionSchema = z.object({ id: stringRequired });
 
-export const editTagSchema = z.object({
+export const editTagActionSchema = z.object({
     id: stringRequired,
     name: z.string().max(50, "Cannot exceed 50 characters").optional(),
     color: stringRequired.max(255, "Cannot exceed 255 characters").optional(),
 });
 
+export type EditTagFormValues = z.infer<typeof editTagActionSchema>;
 
-export type EditTagFormValues = z.infer<typeof editTagSchema>;
+export const createTodoActionSchema = z.object({
+    title: stringRequired,
+    detail: z.string().optional(),
+    deadline: z.date().optional(),
+    tagId: stringRequired,
+})
+
+export type CreateTodoActionFormValues = z.infer<typeof createTodoActionSchema>
