@@ -104,6 +104,8 @@ model Currency {
     countryName String             @unique
     Cutoff      Cutoff[]
     modules     ModuleCurrencies[]
+
+    @@map("currencies")
 }
 
 model ModuleCurrencies {
