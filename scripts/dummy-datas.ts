@@ -1,13 +1,13 @@
-import { Tag, Todo, User } from "@prisma/client";
+import { Tag, Issue, User, Module, Currency } from "@prisma/client";
 
 export const dummyUsers: (Omit<User, "id" | "passwordHash"> & {
     password: string;
 })[] = [
     {
-        email: "bruh@gmail.com",
+        email: "bambang@gmail.com",
         displayName: "Bambang",
-        bio: "Bruh Moment",
-        password: "password",
+        bio: "Bambang Jarwo",
+        password: "bambang",
         avatarUrl: null,
     },
     {
@@ -28,37 +28,192 @@ export const dummyTags: Pick<Tag, "name" | "color">[] = [
     { name: "Friends", color: "#b1d19b" },
 ] as const;
 
-export const dummyTodos: Pick<Todo, "title" | "detail">[] = [
+export const dummyIssues: Pick<Issue, "title" | "detail" | "solution">[] = [
     {
-        title: "Learn TypeScript",
-        detail: "Study the basics of TypeScript.",
+        title: "Login Failure",
+        detail: "Users are unable to log in due to a 500 error.",
+        solution: "Update the authentication service and restart the server.",
     },
     {
-        title: "Set up Prisma",
-        detail: "Install and configure Prisma in the project.",
+        title: "Broken Link on Homepage",
+        detail: "A link on the homepage is leading to a 404 page.",
+        solution: "Update the link URL to point to the correct page.",
     },
     {
-        title: "Seed the database",
-        detail: "Create a seed script to populate the database with dummy data.",
+        title: "Slow Page Load",
+        detail: "The dashboard page is taking too long to load.",
+        solution: "Optimize the database queries and add caching.",
     },
     {
-        title: "Write documentation",
-        detail: "Document the project setup and usage.",
+        title: "Incorrect Data in Reports",
+        detail: "Reports are showing outdated information.",
+        solution: "Fix the data aggregation logic and refresh the report data.",
     },
     {
-        title: "Create UI components",
-        detail: "Build reusable UI components for the project.",
+        title: "Missing Images on Product Pages",
+        detail: "Some product pages are missing images.",
+        solution: "Re-upload the missing images and verify the file paths.",
     },
     {
-        title: "Implement authentication",
-        detail: "Set up user authentication and authorization.",
-    },
-    {
-        title: "Deploy the application",
-        detail: "Deploy the application to a cloud provider.",
-    },
-    {
-        title: "Fix bugs",
-        detail: "Identify and fix bugs in the application.",
+        title: "API Rate Limiting",
+        detail: "API requests are being rate-limited too aggressively.",
+        solution: "Adjust the rate limit settings in the API gateway.",
     },
 ] as const;
+
+export const dummyModules: Pick<
+    Module,
+    "name" | "abbreviation" | "description" | "color" | "fee"
+>[] = [
+    {
+        abbreviation: "IFT",
+        name: "Internal Fund Transfer",
+        description: "BRI to BRI",
+        color: "#d26318",
+        fee: null,
+    },
+    {
+        abbreviation: "RTGS",
+        name: "Real Time Gross Settlement",
+        description:
+            "Metode transfer dana elektronik untuk mengirimkan dana ke rekening tujuan dalam jumlah besar dalam waktu yang lebih cepat secara real time. (diatas Rp 100 juta).",
+        color: "#d26318",
+        fee: "Rp25.000 – Rp50.000",
+    },
+    {
+        abbreviation: "SWIFT",
+        name: "Society for Worldwide Interbank Financial Telecommunications",
+        description:
+            "Sistem transaksi yang memudahkan pertukaran informasi perbankan antar negara menggunakan Bank Identifier Codes (BIC).",
+        color: "#d26318",
+        fee: "Tergantung Bank. ($15-$50)",
+    },
+    {
+        name: "Bi-Fast",
+        abbreviation: null,
+        description:
+            "Sistem pembayaran milik Bank Indonesia untuk menciptakan transfer real time yang lebih murah, aman, dan efisien.",
+        fee: "Rp 2.500",
+        color: "#d26318",
+    },
+    {
+        name: "Kliring",
+        abbreviation: null,
+        description: "Rransfer uang antar rekening / Lalu Lintas Giro (LLG).",
+        color: "#d26318",
+        fee: "Tergantung Lembaga Kliringnya.",
+    },
+    {
+        name: "Modul Penerimaan Negara",
+        abbreviation: "MPN",
+        description:
+            "Sistem penerimaan negara yang menggunakan surat setoran elektronik.",
+        color: "#d26318",
+        fee: null,
+    },
+] as const;
+
+export const dummyCurrencies: Currency[] = [
+    {
+        code: "IDR",
+        countryCode: "ID",
+        countryName: "Indonesia",
+        name: "Indonesian Rupiah",
+    },
+    {
+        code: "USD",
+        countryCode: "US",
+        countryName: "United States",
+        name: "United States Dollar",
+    },
+    {
+        code: "JPY",
+        countryCode: "JP",
+        countryName: "Japan",
+        name: "Japanese Yen",
+    },
+    {
+        code: "SGD",
+        countryCode: "SG",
+        countryName: "Singapore",
+        name: "Singapore Dollar",
+    },
+    {
+        code: "SAR",
+        countryCode: "SA",
+        countryName: "Saudi Arabia",
+        name: "Saudi Riyal",
+    },
+    {
+        code: "HKD",
+        countryCode: "HK",
+        countryName: "Hong Kong",
+        name: "Hong Kong Dollar",
+    },
+    {
+        code: "GBP",
+        countryCode: "GB",
+        countryName: "United Kingdom",
+        name: "British Pound Sterling",
+    },
+    {
+        code: "CNY",
+        countryCode: "CN",
+        countryName: "China",
+        name: "Chinese Yuan",
+    },
+    {
+        code: "NZD",
+        countryCode: "NZ",
+        countryName: "New Zealand",
+        name: "New Zealand Dollar",
+    },
+    {
+        code: "SEK",
+        countryCode: "SE",
+        countryName: "Sweden",
+        name: "Swedish Krona",
+    },
+    {
+        code: "AED",
+        countryCode: "AE",
+        countryName: "United Arab Emirates",
+        name: "UAE Dirham",
+    },
+    {
+        code: "NOK",
+        countryCode: "NO",
+        countryName: "Norway",
+        name: "Norwegian Krone",
+    },
+    {
+        code: "EUR",
+        countryCode: "EU",
+        countryName: "Eurozone",
+        name: "Euro",
+    },
+    {
+        code: "CHF",
+        countryCode: "CH",
+        countryName: "Switzerland",
+        name: "Swiss Franc",
+    },
+    {
+        code: "CAD",
+        countryCode: "CA",
+        countryName: "Canada",
+        name: "Canadian Dollar",
+    },
+    {
+        code: "AUD",
+        countryCode: "AU",
+        countryName: "Australia",
+        name: "Australian Dollar",
+    },
+    {
+        code: "TWD",
+        countryCode: "TW",
+        countryName: "Taiwan",
+        name: "New Taiwan Dollar",
+    },
+];

@@ -1,8 +1,14 @@
 import { hash } from "@node-rs/argon2";
-import { PrismaClient, Tag, User } from "@prisma/client";
+import { Module, PrismaClient, Tag, User } from "@prisma/client";
 import { generateIdFromEntropySize } from "lucia";
 import { argonHashOptionConfig } from "../src/lib/utils";
-import { dummyTags, dummyTodos, dummyUsers } from "./dummy-datas";
+import {
+    dummyTags,
+    dummyIssues,
+    dummyUsers,
+    dummyModules,
+    dummyCurrencies,
+} from "./dummy-datas";
 import { generateRandomDate, getRandomNumberInRange } from "./lib";
 
 import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
@@ -15,11 +21,11 @@ import { Lucia } from "lucia";
     const lucia = new Lucia(adapter);
 
     try {
-        await prisma.user.deleteMany()
-        console.log('Successfully cleared all tables\n')
+        await prisma.user.deleteMany();
+        console.log("Successfully cleared all tables\n");
 
         const usersSeed = await Promise.all(
-            dummyUsers.map(async ({password, ...user}): Promise<User> => {
+            dummyUsers.map(async ({ password, ...user }): Promise<User> => {
                 const hashedPassword = await hash(
                     password,
                     argonHashOptionConfig,
@@ -32,13 +38,13 @@ import { Lucia } from "lucia";
                 };
             }),
         );
-        console.log('Successfully generated users seed data')
+        console.log("Successfully generated users seed data");
 
         const tagsSeed = await Promise.all(
-            dummyTags.map(async (tag): Promise<Omit<Tag, 'createdAt'>> => {
+            dummyTags.map(async (tag): Promise<Omit<Tag, "createdAt">> => {
                 const randomUserIndex = getRandomNumberInRange(
                     0,
-                    usersSeed.length-1,
+                    usersSeed.length - 1,
                 );
                 const randomUserId = usersSeed[randomUserIndex].id;
                 const tagId = generateIdFromEntropySize(10); // 16 characters long
@@ -50,27 +56,77 @@ import { Lucia } from "lucia";
                 };
             }),
         );
-        console.log('Successfully generated tags seed data')
+        console.log("Successfully generated tags seed data");
 
-        const todosSeed = dummyTodos.map((todo) => {
-            const todoId = generateIdFromEntropySize(10); // 16 characters long
+        // const currenciesSeed = await Promise.all(
+        //     dummyCurrencies.map(async (currency): Promise<Omit<Currency, "createdAt">> => {
+        //         const randomUserIndex = getRandomNumberInRange(
+        //             0,
+        //             usersSeed.length - 1,
+        //         );
+        //         const randomUserId = usersSeed[randomUserIndex].id;
+        //         const currencyId = generateIdFromEntropySize(10); // 16 characters long
+
+        //         return {
+        //             ...currency,
+        //             id: currencyId,
+        //             authorId: randomUserId,
+        //         };
+        //     }),
+        // );
+        // console.log("Successfully generated currencys seed data");
+
+        const modulesSeed = await Promise.all(
+            dummyModules.map(
+                async (
+                    module,
+                ): Promise<
+                    Omit<Module, "editorId" | "createdAt" | "lastUpdatedAt">
+                > => {
+                    const randomUserIndex = getRandomNumberInRange(
+                        0,
+                        usersSeed.length - 1,
+                    );
+                    const randomUserId = usersSeed[randomUserIndex].id;
+                    const moduleId = generateIdFromEntropySize(10); // 16 characters long
+
+                    return {
+                        ...module,
+                        id: moduleId,
+                        authorId: randomUserId,
+                    };
+                },
+            ),
+        );
+        console.log("Successfully generated modules seed data");
+
+        const issuesSeed = dummyIssues.map((issue) => {
+            const issueId = generateIdFromEntropySize(10); // 16 characters long
             const randomDate = generateRandomDate();
-            const randomUserIndex = getRandomNumberInRange(0, usersSeed.length-1);
+            const randomUserIndex = getRandomNumberInRange(
+                0,
+                usersSeed.length - 1,
+            );
             const randomUserId = usersSeed[randomUserIndex].id;
-            const randomTagIndex = getRandomNumberInRange(0, tagsSeed.length-1);
+            const randomTagIndex = getRandomNumberInRange(
+                0,
+                tagsSeed.length - 1,
+            );
             const randomTagId = tagsSeed[randomTagIndex].id;
-            const isDone = getRandomNumberInRange(1, 10) % 2 === 0;
+            const isSolved = getRandomNumberInRange(1, 10) % 2 === 0;
+            const randomOccurenceCount = getRandomNumberInRange(0, 35);
 
             return {
-                ...todo,
-                id: todoId,
-                deadline: randomDate,
+                ...issue,
+                id: issueId,
+                createdAt: randomDate,
                 authorId: randomUserId,
+                occurenceCount: randomOccurenceCount,
                 tagId: randomTagId,
-                isDone,
+                isSolved,
             };
         });
-        console.log('Successfully generated todos seed data')
+        console.log("Successfully generated issues seed data");
 
         console.log("BEGIN SEEDING");
 
@@ -93,11 +149,23 @@ import { Lucia } from "lucia";
         });
         console.log("Successfully seeded tags table!");
 
-        await prisma.todo.createMany({
-            data: todosSeed,
+        await prisma.currency.createMany({
+            data: dummyCurrencies,
             skipDuplicates: true,
         });
-        console.log("Successfully seeded todos table!");
+        console.log("Successfully seeded tags table!");
+
+        await prisma.module.createMany({
+            data: modulesSeed,
+            skipDuplicates: true,
+        });
+        console.log("Successfully seeded modules table!");
+
+        await prisma.issue.createMany({
+            data: issuesSeed,
+            skipDuplicates: true,
+        });
+        console.log("Successfully seeded issues table!");
         console.log("\nDUMMY SEED COMPLETE BROK");
     } catch (err) {
         console.error("SEEDING ERROR:", err);

@@ -21,9 +21,15 @@ model User {
     displayName  String?
     bio          String?
 
-    todos    Todo[]
-    tags     Tag[]
-    sessions Session[]
+    issues       Issue[]
+    participants IssueParticipant[]
+    tags         Tag[]
+    sessions     Session[]
+
+    modules       Module[] @relation("ModuleCreatedBy")
+    editedModules Module[] @relation("ModuleLastEditedBy")
+    Cutoffs       Cutoff[] @relation("CutoffCreatedBy")
+    editedCutoffs Cutoff[] @relation("CutoffLastEditedBy")
 
     @@map("users")
 }
@@ -38,20 +44,108 @@ model Session {
     @@map("sessions")
 }
 
-model Todo {
-    id       String    @id
-    title    String
+model Issue {
+    id       String  @id
+    title    String  @unique
     detail   String?
-    deadline DateTime?
-    isDone   Boolean
+    solution String
+
+    isSolved       Boolean
+    occurenceCount Int
 
     authorId  String
     createdBy User   @relation(references: [id], fields: [authorId], onDelete: Cascade)
+
+    participants IssueParticipant[]
+
     tagId     String
-    tag       Tag    @relation(references: [id], fields: [tagId], onDelete: Cascade)
+    tag       Tag      @relation(references: [id], fields: [tagId], onDelete: Cascade)
     createdAt DateTime @default(now())
 
-    @@map("todos")
+    @@map("issues")
+}
+
+model IssueParticipant {
+    issue              Issue    @relation(fields: [issueId], references: [id], onDelete: Cascade)
+    issueId            String
+    user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId             String
+    lastParticipatedAt DateTime @default(now())
+
+    @@id([issueId, userId]) // Composite primary key, each userId can only participate in one IssueId.
+    @@map("issue_participants")
+}
+
+model Module {
+    id           String  @id
+    name         String  @unique
+    abbreviation String?
+    description  String?
+    color        String
+    fee          String?
+
+    createdAt     DateTime @default(now())
+    lastUpdatedAt DateTime @updatedAt
+
+    authorId     String?
+    createdBy    User?              @relation("ModuleCreatedBy", references: [id], fields: [authorId], onDelete: SetNull)
+    editorId     String?
+    lastEditedBy User?              @relation("ModuleLastEditedBy", references: [id], fields: [editorId], onDelete: SetNull)
+    cutoffs      Cutoff[]
+    currencies   ModuleCurrencies[]
+
+    @@map("modules")
+}
+
+model Currency {
+    code        String             @id
+    name        String             @unique
+    countryCode String             @unique
+    countryName String             @unique
+    Cutoff      Cutoff[]
+    modules     ModuleCurrencies[]
+}
+
+model ModuleCurrencies {
+    module       Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+    moduleId     String
+    currency     Currency @relation(fields: [currencyCode], references: [code], onDelete: Cascade)
+    currencyCode String
+
+    @@id([moduleId, currencyCode]) // Composite primary key, each currencyCode can only participate in one IssueId.
+    @@map("module_currencies")
+}
+
+model Cutoff {
+    id           String   @id
+    moduleId     String
+    module       Module   @relation(references: [id], fields: [moduleId], onDelete: Cascade)
+    currencyCode String
+    currency     Currency @relation(references: [code], fields: [currencyCode], onDelete: Cascade)
+
+    schedules CutoffSchedules[]
+
+    description String?
+
+    authorId     String?
+    createdBy    User?   @relation("CutoffCreatedBy", references: [id], fields: [authorId], onDelete: SetNull)
+    editorId     String?
+    lastEditedBy User?   @relation("CutoffLastEditedBy", references: [id], fields: [editorId], onDelete: SetNull)
+
+    @@map("cutoffs")
+}
+
+model CutoffSchedules {
+    id String @id
+
+    day       Int
+    startTime String
+    endTime   String
+
+    cutoffId String
+    cutoff   Cutoff @relation(references: [id], fields: [cutoffId], onDelete: Cascade)
+
+    @@map("cutoff_schedules")
 }
 
 model Tag {
@@ -61,7 +155,8 @@ model Tag {
 
     authorId  String
     createdBy User   @relation(references: [id], fields: [authorId], onDelete: Cascade)
-    todos     Todo[]
+
+    issues    Issue[]
     createdAt DateTime @default(now())
 
     @@map("tags")
