@@ -1,4 +1,11 @@
-import { Currency, Cutoff, Module, Tag, User } from "@prisma/client";
+import {
+    Currency,
+    Cutoff,
+    CutoffSchedules,
+    Module,
+    Tag,
+    User,
+} from "@prisma/client";
 import { dummyUsers } from "./seed/users";
 import { argonHashOptionConfig } from "../src/lib/utils";
 import { hash } from "@node-rs/argon2";
@@ -48,7 +55,7 @@ export async function seedTables(
 //     param2: P2,
 // ): Promise<T>;
 
-type GenerateSeedFn<T, P extends any[]> = (...params: P) => Promise<T>;
+type GenerateSeedFn<T, P extends any[]> = (...params: P) => T | Promise<T>;
 
 // The actual implementation of the function:
 export async function generateSeed<T, P extends any[]>(
@@ -58,7 +65,7 @@ export async function generateSeed<T, P extends any[]>(
 ): Promise<T> {
     try {
         const seedData = await generateSeedFn(...params);
-        console.log(`🏁 generated '${tableName}' seed data`)
+        console.log(`🏁 generated '${tableName}' seed data`);
         return seedData;
     } catch (err) {
         throw new Error(`Failed to generate '${tableName}' seed`);
@@ -80,39 +87,29 @@ export async function generateUsersSeed() {
 }
 
 export async function generateTagsSeed(usersSeed: Pick<User, "id">[]) {
-    return Promise.all(
-        dummyTags.map(async (tag): Promise<Omit<Tag, "createdAt">> => {
-            const randomUserId = getRandomSeedId(usersSeed);
-            const tagId = generateIdFromEntropySize(10); // 16 characters long
+    return dummyTags.map((tag) => {
+        const randomUserId = getRandomSeedId(usersSeed);
+        const tagId = generateIdFromEntropySize(10); // 16 characters long
 
-            return {
-                ...tag,
-                id: tagId,
-                authorId: randomUserId,
-            };
-        }),
-    );
+        return {
+            ...tag,
+            id: tagId,
+            authorId: randomUserId,
+        };
+    });
 }
 
-export async function generateModulesSeed(usersSeed: Pick<User, "id">[]) {
-    return await Promise.all(
-        dummyModules.map(
-            async (
-                module,
-            ): Promise<
-                Omit<Module, "editorId" | "createdAt" | "lastUpdatedAt">
-            > => {
-                const randomUserId = getRandomSeedId(usersSeed);
-                const moduleId = generateIdFromEntropySize(10); // 16 characters long
+export function generateModulesSeed(usersSeed: Pick<User, "id">[]) {
+    return dummyModules.map((module) => {
+        const randomUserId = getRandomSeedId(usersSeed);
+        const moduleId = generateIdFromEntropySize(10); // 16 characters long
 
-                return {
-                    ...module,
-                    id: moduleId,
-                    authorId: randomUserId,
-                };
-            },
-        ),
-    );
+        return {
+            ...module,
+            id: moduleId,
+            authorId: randomUserId,
+        };
+    });
 }
 
 export async function generateIssuesSeed(
@@ -141,11 +138,11 @@ export async function generateIssuesSeed(
     });
 }
 
-export async function generateCutoffsSeed(
+export function generateCutoffsSeed(
     modulesSeed: Pick<Module, "id">[],
     usersSeed: Pick<User, "id">[],
     currencySeed: Pick<Currency, "code">[],
-): Promise<Cutoff[]> {
+): Cutoff[] {
     const moduleCutoffs: Cutoff[] = [];
     const cutoffDescriptions = ["Daily cutoff", "Weekly cutoff"];
 
@@ -186,4 +183,48 @@ export async function generateCutoffsSeed(
         }
     }
     return moduleCutoffs;
+}
+
+export function generateCutoffSchedulesSeed(
+    cutoffsSeed: Pick<Cutoff, "id">[],
+): CutoffSchedules[] {
+    const cutoffSchedules: CutoffSchedules[] = [];
+
+    cutoffsSeed.map((cutoff) => {
+        const availableDays = [1, 2, 3, 4, 5, 6, 7];
+        const randomDayCount = getRandomNumberInRange(1, 7);
+        const cutoffScheduleDays: number[] = [];
+
+        for (let i = 0; i < randomDayCount; i++) {
+            const randomIndex = getRandomNumberInRange(
+                0,
+                availableDays.length - 1,
+            );
+            // splice returns an array of the deleted element.
+            const randomDay = availableDays.splice(randomIndex, 1)[0];
+            cutoffScheduleDays.push(randomDay);
+        }
+
+        for (const day of cutoffScheduleDays) {
+            const cutoffScheduleId = generateIdFromEntropySize(10);
+            const randomStartTime = getRandomNumberInRange(0, 4);
+            const randomEndTime = getRandomNumberInRange(
+                randomStartTime,
+                12,
+            ).toString();
+
+            const formattedEndTime =
+                randomEndTime.length > 1 ? randomEndTime : "0" + randomEndTime;
+
+            cutoffSchedules.push({
+                cutoffId: cutoff.id,
+                day,
+                startTime: `0${randomStartTime}:00`,
+                endTime: `${formattedEndTime}:00`,
+                id: cutoffScheduleId,
+            });
+        }
+    });
+
+    return cutoffSchedules;
 }

@@ -2,6 +2,7 @@ import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 import { Lucia } from "lucia";
 import {
+    generateCutoffSchedulesSeed,
     generateCutoffsSeed,
     generateIssuesSeed,
     generateModulesSeed,
@@ -20,9 +21,9 @@ import { dummyCurrencies } from "./seed/currencies";
 
     try {
         await prisma.user.deleteMany();
-        await prisma.module.deleteMany()
-        await prisma.currency.deleteMany()
-        
+        await prisma.module.deleteMany();
+        await prisma.currency.deleteMany();
+
         console.log("Successfully cleared all tables\n");
 
         const usersSeed = await generateSeed("users", generateUsersSeed);
@@ -49,55 +50,69 @@ import { dummyCurrencies } from "./seed/currencies";
             usersSeed,
             dummyCurrencies,
         );
+        const cutoffSchedulesSeed = await generateSeed(
+            "cutoffs",
+            generateCutoffSchedulesSeed,
+            cutoffSeed,
+        );
 
         console.log("🌱  BEGIN SEEDING");
 
         await seedTables([
             {
                 tableName: "users",
+                seedData: usersSeed,
                 method: (data) =>
                     prisma.user.createMany({ data, skipDuplicates: true }),
-                seedData: usersSeed,
             },
             {
                 tableName: "sessions",
+                seedData: usersSeed,
                 method: async (data) =>
                     await Promise.all(
                         data.map((user) => {
                             lucia.createSession(user.id, {});
                         }),
                     ),
-                seedData: usersSeed,
             },
             {
                 tableName: "tags",
+                seedData: tagsSeed,
                 method: (data) =>
                     prisma.tag.createMany({ data, skipDuplicates: true }),
-                seedData: tagsSeed,
             },
             {
                 tableName: "currencies",
+                seedData: dummyCurrencies,
                 method: (data) =>
                     prisma.currency.createMany({ data, skipDuplicates: true }),
-                seedData: dummyCurrencies,
             },
             {
                 tableName: "modules",
+                seedData: modulesSeed,
                 method: (data) =>
                     prisma.module.createMany({ data, skipDuplicates: true }),
-                seedData: modulesSeed,
             },
             {
                 tableName: "issues",
+                seedData: issuesSeed,
                 method: (data) =>
                     prisma.issue.createMany({ data, skipDuplicates: true }),
-                seedData: issuesSeed,
             },
             {
                 tableName: "cutoffs",
+                seedData: cutoffSeed,
                 method: (data) =>
                     prisma.cutoff.createMany({ data, skipDuplicates: true }),
-                seedData: cutoffSeed,
+            },
+            {
+                tableName: "cutoff_schedules",
+                seedData: cutoffSchedulesSeed,
+                method: (data) =>
+                    prisma.cutoffSchedules.createMany({
+                        data,
+                        skipDuplicates: true,
+                    }),
             },
         ]);
 
