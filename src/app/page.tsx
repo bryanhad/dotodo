@@ -3,8 +3,8 @@ import AuthModal from "@/components/auth-modal";
 import LogoutButton from "@/components/auth/logout-button";
 import SignInForm from "@/components/auth/sign-in-form";
 import SignUpForm from "@/components/auth/sign-up-form";
-import CreateTodo from "./(main)/_components/todo/create-todo";
-import { TodoFormProvider } from "./(main)/_components/todo/context";
+import CreateIssue from "./(main)/_components/issue/create-issue";
+import { TodoFormProvider } from "./(main)/_components/issue/context";
 
 export default async function Home() {
     const { user } = await validateRequest();
@@ -24,7 +24,7 @@ export default async function Home() {
                 ) : (
                     <>
                         <TodoFormProvider>
-                            <CreateTodo />
+                            <CreateIssue />
                         </TodoFormProvider>
                         {/* <AuthModal title="Logout">
                             <LogoutButton />

@@ -103,4 +103,10 @@ export const dummyCurrencies: Currency[] = [
         countryName: "Taiwan",
         name: "New Taiwan Dollar",
     },
+    {
+        code: "ALL",
+        countryCode: "ALL",
+        countryName: "ALL",
+        name: "ALL",
+    },
 ] as const

@@ -1,7 +1,7 @@
 import { createPostponedAbortSignal } from "next/dist/server/app-render/dynamic-rendering";
 import { z } from "zod";
 
-const stringRequired = z.string().min(1, "Required");
+export const stringRequired = z.string().min(1, "Required");
 const containsNumberRegex = /\d/;
 const usernameSchema = z
     .string()
@@ -23,33 +23,46 @@ export const signInFormSchema = z.object({
 
 export type SignInFormValues = z.infer<typeof signInFormSchema>;
 
-export const createTagActionSchema = z.object({
-    id: stringRequired,
-    name: stringRequired.max(50, "Cannot exceed 50 characters"),
-    color: stringRequired.max(255, "Cannot exceed 255 characters"),
-});
-export const createTagFormSchema = z.object({
-    name: stringRequired.max(50),
-    color: stringRequired.max(255),
-});
+// export const createTagActionSchema = z.object({
+//     id: stringRequired,
+//     name: stringRequired.max(50, "Cannot exceed 50 characters"),
+//     color: stringRequired.max(255, "Cannot exceed 255 characters"),
+// });
 
-export type CreateTagFormValues = z.infer<typeof createTagFormSchema>;
+// export const createTagFormSchema = z.object({
+//     name: stringRequired.max(50),
+//     color: stringRequired.max(255),
+// });
+// export type CreateTagFormValues = z.infer<typeof createTagFormSchema>;
 
-export const deleteTagActionSchema = z.object({ id: stringRequired });
 
-export const editTagActionSchema = z.object({
-    id: stringRequired,
-    name: z.string().max(50, "Cannot exceed 50 characters").optional(),
-    color: stringRequired.max(255, "Cannot exceed 255 characters").optional(),
-});
+// export const deleteTagActionSchema = z.object({ id: stringRequired });
 
-export type EditTagFormValues = z.infer<typeof editTagActionSchema>;
+// export const editTagActionSchema = z.object({
+//     id: stringRequired,
+//     name: z.string().max(50, "Cannot exceed 50 characters").optional(),
+//     color: stringRequired.max(255, "Cannot exceed 255 characters").optional(),
+// });
 
-export const createTodoActionSchema = z.object({
+// export type EditTagFormValues = z.infer<typeof editTagActionSchema>;
+
+export const createIssueActionSchema = z.object({
     title: stringRequired,
     detail: z.string().optional(),
-    deadline: z.date().optional(),
-    tagId: stringRequired,
+    issueDate: z.date().optional(),
+    moduleId: stringRequired,
+    tagId: z.string().optional(),
 })
 
-export type CreateTodoActionFormValues = z.infer<typeof createTodoActionSchema>
+export type CreateIssueFormValues = z.infer<typeof createIssueActionSchema>;
+
+// export type CreateTodoActionFormValues = z.infer<typeof createTodoActionSchema>
+
+// export const createTodoActionSchema = z.object({
+//     title: stringRequired,
+//     detail: z.string().optional(),
+//     deadline: z.date().optional(),
+//     tagId: stringRequired,
+// })
+
+// export type CreateTodoActionFormValues = z.infer<typeof createTodoActionSchema>

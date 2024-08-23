@@ -1,25 +1,24 @@
 'use client'
-
 import {
-    CreateTodoActionFormValues,
-    createTodoActionSchema,
+    createIssueActionSchema,
+    CreateIssueFormValues
 } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createContext } from "react";
-import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 export const TodoFormProvider = ({
     children,
 }: {
     children: React.ReactNode;
 }) => {
-    const formMethods = useForm<CreateTodoActionFormValues>({
-        resolver: zodResolver(createTodoActionSchema),
+    const formMethods = useForm<CreateIssueFormValues>({
+        resolver: zodResolver(createIssueActionSchema),
         defaultValues: {
             title: "",
-            deadline: new Date(),
+            issueDate: new Date(),
             detail: undefined,
             tagId: "",
+            moduleId: ''
         },
     });
 

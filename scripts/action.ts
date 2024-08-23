@@ -2,6 +2,7 @@ import {
     Currency,
     Cutoff,
     CutoffSchedules,
+    Issue,
     Module,
     Tag,
     User,
@@ -112,16 +113,18 @@ export function generateModulesSeed(usersSeed: Pick<User, "id">[]) {
     });
 }
 
-export async function generateIssuesSeed(
+export function generateIssuesSeed(
     usersSeed: Pick<User, "id">[],
     tagsSeed: Pick<Tag, "id">[],
-) {
+    modulesSeed: Pick<Tag, "id">[],
+): Omit<Issue, 'lastUpdatedAt'>[] {
     return dummyIssues.map((issue) => {
         const issueId = generateIdFromEntropySize(10); // 16 characters long
         const randomDate = generateRandomDate();
 
         const randomUserId = getRandomSeedId(usersSeed);
         const randomTagId = getRandomSeedId(tagsSeed);
+        const randomModuleId = getRandomSeedId(modulesSeed);
 
         const isSolved = getRandomNumberInRange(1, 10) % 2 === 0;
         const randomOccurenceCount = getRandomNumberInRange(0, 35);
@@ -133,6 +136,7 @@ export async function generateIssuesSeed(
             authorId: randomUserId,
             occurenceCount: randomOccurenceCount,
             tagId: randomTagId,
+            moduleId: randomModuleId,
             isSolved,
         };
     });

@@ -5,46 +5,49 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { CreateIssueFormValues } from "@/lib/validation";
-import { Tag as TagT } from "@prisma/client";
+import { Module as ModuleT } from "@prisma/client";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { deleteTagAction } from "./action";
-import EditTagForm from "./edit-tag-form";
-import { TagColors } from "./lib";
-import { useAction } from 'next-safe-action/hooks'
+import { deleteModuleAction } from "./action";
+import EditModuleForm from "./edit/form";
+import { ModuleColors } from "./lib";
+import { useAction } from "next-safe-action/hooks";
 
-type BaseProps = Pick<TagT, "color" | "name"> & {
+type BaseProps = Pick<ModuleT, "color" | "name"> & {
     className?: string;
     isPreview?: boolean;
 };
 
 type PreviewProps = BaseProps & { isPreview: true };
 
-type NonPreviewProps = BaseProps & {
-    isPreview?: false;
-    id: string;
-};
+type NonPreviewProps = BaseProps &
+    Pick<ModuleT, "abbreviation"> & {
+        isPreview?: false;
+        id: string;
+    };
 
 type Props = PreviewProps | NonPreviewProps;
 
-function Tag(props: Props) {
+function ModuleItem(props: Props) {
     const [isEditing, setIsEditing] = useState(false);
     const { toast } = useToast();
     const issueForm = useFormContext<CreateIssueFormValues>();
 
-    const { execute: executeDeleteTag, isExecuting: isExecutingDeleteTag } =
-        useAction(deleteTagAction, {
-            onSuccess: ({ data }) => {
-                if (data?.name)
-                    [toast({ title: `Tag '${data.name}' has been removed` })];
-            },
-            onError: ({ error: { serverError } }) => {
-                if (serverError) {
-                    toast({ variant: "destructive", ...serverError });
-                }
-            },
-        });
+    const {
+        execute: executeDeleteModule,
+        isExecuting: isExecutingDeleteModule,
+    } = useAction(deleteModuleAction, {
+        onSuccess: ({ data }) => {
+            if (data?.name)
+                [toast({ title: `Module '${data.name}' has been removed` })];
+        },
+        onError: ({ error: { serverError } }) => {
+            if (serverError) {
+                toast({ variant: "destructive", ...serverError });
+            }
+        },
+    });
 
     if (props.isPreview) {
         return (
@@ -59,7 +62,7 @@ function Tag(props: Props) {
                     props.className,
                 )}
             >
-                <TagIcon hexColor={props.color} />
+                <ModuleColor hexColor={props.color} />
                 <p className="">{props.name}</p>
             </Button>
         );
@@ -82,33 +85,35 @@ function Tag(props: Props) {
                         className="flex h-full flex-[1] items-center gap-4 rounded-l-md pl-4"
                         onKeyDown={(e) => {
                             if (e.key === "Enter") {
-                                issueForm.setValue("tagId", props.id);
+                                issueForm.setValue("moduleId", props.id);
                             }
                         }}
                     >
-                        <TagIcon hexColor={props.color} />
-                        {props.name}
+                        <ModuleColor hexColor={props.color} />
+                        {props.abbreviation || props.name}
                     </div>
                 )}
                 <div className="flex items-center gap-2 pr-4">
-                    <EditTagForm
+                    <EditModuleForm
                         isEditing={isEditing}
                         setIsEditing={setIsEditing}
-                        tag={{
+                        module={{
                             color: props.color,
                             id: props.id,
                             name: props.name,
                         }}
                     />
-                    {/* DELETE TAG BUTTON */}
+                    {/* DELETE MODULE BUTTON */}
                     {!isEditing && (
                         <SubmitButton
                             icon
-                            isLoading={isExecutingDeleteTag}
+                            isLoading={isExecutingDeleteModule}
                             size={"sm"}
                             className=""
                             variant={"outline"}
-                            onClick={() => executeDeleteTag({ id: props.id })}
+                            onClick={() =>
+                                executeDeleteModule({ id: props.id })
+                            }
                         >
                             <Trash2 className="shrink-0" size={14} />
                         </SubmitButton>
@@ -119,12 +124,12 @@ function Tag(props: Props) {
     );
 }
 
-export default Tag;
+export default ModuleItem;
 
-type TagIconProps =
+type ModuleColorProps =
     | {
           className?: string;
-          defaultColor: TagColors;
+          defaultColor: ModuleColors;
           hexColor?: never;
       }
     | {
@@ -133,11 +138,11 @@ type TagIconProps =
           hexColor: string;
       };
 
-export function TagIcon({
+export function ModuleColor({
     className,
-    defaultColor = TagColors.DEFAULT,
+    defaultColor = ModuleColors.DEFAULT,
     hexColor,
-}: TagIconProps) {
+}: ModuleColorProps) {
     return (
         <div
             className={cn(

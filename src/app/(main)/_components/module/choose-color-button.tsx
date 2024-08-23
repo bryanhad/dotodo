@@ -5,7 +5,7 @@ import Modal from "@/components/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import Tag, { TagIcon } from "./tag";
+import ModuleItem, { ModuleColor } from "./module-item";
 
 type Props = {
     formColorValueState: string;
@@ -28,7 +28,7 @@ function ChooseColorButton({
     return (
         <Modal
             ariaDescription="choose color modal"
-            title="Pick Tag Color"
+            title="Pick Module Color"
             desc="Either pick one of the color or make your own"
             open={openModal}
             onOpenChange={setOpenModal}
@@ -38,13 +38,13 @@ function ChooseColorButton({
                     variant={"outline"}
                     className="size-9 rounded-full p-0"
                 >
-                    <TagIcon hexColor={formColorValueState} />
+                    <ModuleColor hexColor={formColorValueState} />
                 </Button>
             }
         >
             <div className="space-y-2">
                 <p className="text-[12px] font-light italic">preview</p>
-                <Tag isPreview color={formColorValueState} name="example-tag" />
+                <ModuleItem isPreview color={formColorValueState} name="example-module" />
             </div>
             <div className="flex gap-4">
                 <ColorPicker

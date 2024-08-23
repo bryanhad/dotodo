@@ -1,4 +1,5 @@
 import { Module } from "@prisma/client";
+import { ModuleColors } from "../../src/app/(main)/_components/module/lib";
 
 export const dummyModules: Pick<
     Module,
@@ -8,7 +9,7 @@ export const dummyModules: Pick<
         abbreviation: "IFT",
         name: "Internal Fund Transfer",
         description: "BRI to BRI",
-        color: "#d26318",
+        color: ModuleColors.AMBER,
         fee: null,
     },
     {
@@ -16,7 +17,7 @@ export const dummyModules: Pick<
         name: "Real Time Gross Settlement",
         description:
             "Metode transfer dana elektronik untuk mengirimkan dana ke rekening tujuan dalam jumlah besar dalam waktu yang lebih cepat secara real time. (diatas Rp 100 juta).",
-        color: "#d26318",
+        color: ModuleColors.EMERALD,
         fee: "Rp25.000 – Rp50.000",
     },
     {
@@ -24,7 +25,7 @@ export const dummyModules: Pick<
         name: "Society for Worldwide Interbank Financial Telecommunications",
         description:
             "Sistem transaksi yang memudahkan pertukaran informasi perbankan antar negara menggunakan Bank Identifier Codes (BIC).",
-        color: "#d26318",
+        color: ModuleColors.SKY,
         fee: "Tergantung Bank. ($15-$50)",
     },
     {
@@ -33,13 +34,13 @@ export const dummyModules: Pick<
         description:
             "Sistem pembayaran milik Bank Indonesia untuk menciptakan transfer real time yang lebih murah, aman, dan efisien.",
         fee: "Rp 2.500",
-        color: "#d26318",
+        color: ModuleColors.VIOLET,
     },
     {
         name: "Kliring",
         abbreviation: null,
         description: "Rransfer uang antar rekening / Lalu Lintas Giro (LLG).",
-        color: "#d26318",
+        color: ModuleColors.GREEN,
         fee: "Tergantung Lembaga Kliringnya.",
     },
     {
@@ -47,7 +48,7 @@ export const dummyModules: Pick<
         abbreviation: "MPN",
         description:
             "Sistem penerimaan negara yang menggunakan surat setoran elektronik.",
-        color: "#d26318",
+        color: ModuleColors.LIME,
         fee: null,
     },
 ] as const;

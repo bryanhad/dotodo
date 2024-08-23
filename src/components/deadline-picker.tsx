@@ -1,17 +1,10 @@
-import { format } from "date-fns";
-import {
-    ControllerProps,
-    FieldPath
-} from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
-    FormLabel,
-    FormMessage,
+    FormMessage
 } from "@/components/ui/form";
 import {
     Popover,
@@ -19,15 +12,20 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import {
+    ControllerProps,
+    FieldPath
+} from "react-hook-form";
 
 type Props<
-    TFieldValues extends { deadline?: Date | undefined },
+    TFieldValues extends { issueDate?: Date | undefined },
     TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = Pick<ControllerProps<TFieldValues, TName>, "control" | "name">;
 
 function DeadlinePicker<
-    TFieldValues extends { deadline?: Date | undefined },
+    TFieldValues extends { issueDate?: Date | undefined },
     TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({ control, name }: Props<TFieldValues, TName>) {
     return (

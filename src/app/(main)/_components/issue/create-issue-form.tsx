@@ -4,11 +4,11 @@ import DeadlinePicker from "@/components/deadline-picker";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CreateTodoActionFormValues } from "@/lib/validation";
+import { CreateIssueFormValues } from "@/lib/validation";
 import { useFormContext } from "react-hook-form";
 
-function CreateTodoForm() {
-    const form = useFormContext<CreateTodoActionFormValues>();
+function CreateIssueForm() {
+    const form = useFormContext<CreateIssueFormValues>();
 
     return (
         <Form {...form}>
@@ -21,7 +21,7 @@ function CreateTodoForm() {
                             <FormItem className="flex-[1]">
                                 <FormControl>
                                     <Input
-                                        placeholder="Type new tag here"
+                                        placeholder="What's the issue?"
                                         {...field}
                                     />
                                 </FormControl>
@@ -29,14 +29,14 @@ function CreateTodoForm() {
                             </FormItem>
                         )}
                     />
-                    <DeadlinePicker name="deadline" control={form.control} />
+                    <DeadlinePicker name="issueDate" control={form.control} />
                 </div>
                 <div className="flex gap-2">
-                    <Button type="submit">Add Todo</Button>
+                    <Button type="submit">Add Issue</Button>
                 </div>
             </form>
         </Form>
     );
 }
 
-export default CreateTodoForm;
+export default CreateIssueForm;

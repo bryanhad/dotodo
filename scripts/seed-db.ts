@@ -42,6 +42,7 @@ import { dummyCurrencies } from "./seed/currencies";
             generateIssuesSeed,
             usersSeed,
             tagsSeed,
+            modulesSeed
         );
         const cutoffSeed = await generateSeed(
             "cutoffs",

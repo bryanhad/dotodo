@@ -50,7 +50,7 @@ model Issue {
     detail   String?
     solution String
 
-    isSolved       Boolean
+    isSolved       Boolean @default(false)
     occurenceCount Int
 
     authorId  String
@@ -58,9 +58,13 @@ model Issue {
 
     participants IssueParticipant[]
 
-    tagId     String
-    tag       Tag      @relation(references: [id], fields: [tagId], onDelete: Cascade)
-    createdAt DateTime @default(now())
+    tagId    String
+    tag      Tag    @relation(references: [id], fields: [tagId], onDelete: Cascade)
+    moduleId String
+    module   Module @relation(references: [id], fields: [moduleId], onDelete: Cascade)
+
+    createdAt     DateTime @default(now())
+    lastUpdatedAt DateTime @updatedAt
 
     @@map("issues")
 }
@@ -87,36 +91,38 @@ model Module {
     createdAt     DateTime @default(now())
     lastUpdatedAt DateTime @updatedAt
 
+    issues       Issue[]
     authorId     String?
-    createdBy    User?              @relation("ModuleCreatedBy", references: [id], fields: [authorId], onDelete: SetNull)
+    createdBy    User?     @relation("ModuleCreatedBy", references: [id], fields: [authorId], onDelete: SetNull)
     editorId     String?
-    lastEditedBy User?              @relation("ModuleLastEditedBy", references: [id], fields: [editorId], onDelete: SetNull)
+    lastEditedBy User?     @relation("ModuleLastEditedBy", references: [id], fields: [editorId], onDelete: SetNull)
     cutoffs      Cutoff[]
-    currencies   ModuleCurrencies[]
+    currencyId   String?
+    Currency     Currency? @relation(references: [code], fields: [currencyId], onDelete: SetNull)
 
     @@map("modules")
 }
 
 model Currency {
-    code        String             @id
-    name        String             @unique
-    countryCode String             @unique
-    countryName String             @unique
+    code        String   @id
+    name        String   @unique
+    countryCode String   @unique
+    countryName String   @unique
     Cutoff      Cutoff[]
-    modules     ModuleCurrencies[]
+    modules     Module[]
 
     @@map("currencies")
 }
 
-model ModuleCurrencies {
-    module       Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-    moduleId     String
-    currency     Currency @relation(fields: [currencyCode], references: [code], onDelete: Cascade)
-    currencyCode String
+// model ModuleCurrencies {
+//     module       Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+//     moduleId     String
+//     currency     Currency @relation(fields: [currencyCode], references: [code], onDelete: Cascade)
+//     currencyCode String
 
-    @@id([moduleId, currencyCode]) // Composite primary key, each currencyCode can only participate in one IssueId.
-    @@map("module_currencies")
-}
+//     @@id([moduleId, currencyCode]) // Composite primary key, each currencyCode can only participate in one IssueId.
+//     @@map("module_currencies")
+// }
 
 model Cutoff {
     id           String   @id
