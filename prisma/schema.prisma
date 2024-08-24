@@ -97,8 +97,8 @@ model Module {
     editorId     String?
     lastEditedBy User?     @relation("ModuleLastEditedBy", references: [id], fields: [editorId], onDelete: SetNull)
     cutoffs      Cutoff[]
-    currencyId   String?
-    Currency     Currency? @relation(references: [code], fields: [currencyId], onDelete: SetNull)
+    currencyCode   String?
+    Currency     Currency? @relation(references: [code], fields: [currencyCode], onDelete: SetNull)
 
     @@map("modules")
 }
@@ -108,6 +108,7 @@ model Currency {
     name        String   @unique
     countryCode String   @unique
     countryName String   @unique
+    symbol      String   @unique
     Cutoff      Cutoff[]
     modules     Module[]
 

@@ -2,6 +2,7 @@ import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 import { Lucia } from "lucia";
 import {
+    generateCurrenciesSeed,
     generateCutoffSchedulesSeed,
     generateCutoffsSeed,
     generateIssuesSeed,
@@ -11,11 +12,35 @@ import {
     generateUsersSeed,
     seedTables,
 } from "./action";
-import { dummyCurrencies } from "./seed/currencies";
+import { CURRENCIES } from "./seed/currencies";
 
 (async () => {
-    const prisma = new PrismaClient();
+    const prisma = new PrismaClient({
+        log: [
+            {
+                emit: "event",
+                level: "query",
+            },
+            {
+                emit: "stdout",
+                level: "error",
+            },
+            {
+                emit: "stdout",
+                level: "info",
+            },
+            {
+                emit: "stdout",
+                level: "warn",
+            },
+        ],
+    });
 
+    prisma.$on("query", (e) => {
+        console.log("Query: " + e.query);
+        console.log("Params: " + e.params);
+        console.log("Duration: " + e.duration + "ms");
+    });
     const adapter = new PrismaAdapter(prisma.session, prisma.user);
     const lucia = new Lucia(adapter);
 
@@ -23,6 +48,7 @@ import { dummyCurrencies } from "./seed/currencies";
         await prisma.user.deleteMany();
         await prisma.module.deleteMany();
         await prisma.currency.deleteMany();
+        await prisma.cutoff.deleteMany();
 
         console.log("Successfully cleared all tables\n");
 
@@ -42,14 +68,19 @@ import { dummyCurrencies } from "./seed/currencies";
             generateIssuesSeed,
             usersSeed,
             tagsSeed,
-            modulesSeed
+            modulesSeed,
+        );
+        const currenciesSeed = await generateSeed(
+            "currencies",
+            generateCurrenciesSeed,
+            CURRENCIES,
         );
         const cutoffSeed = await generateSeed(
             "cutoffs",
             generateCutoffsSeed,
             modulesSeed,
             usersSeed,
-            dummyCurrencies,
+            currenciesSeed,
         );
         const cutoffSchedulesSeed = await generateSeed(
             "cutoffs",
@@ -84,7 +115,7 @@ import { dummyCurrencies } from "./seed/currencies";
             },
             {
                 tableName: "currencies",
-                seedData: dummyCurrencies,
+                seedData: currenciesSeed,
                 method: (data) =>
                     prisma.currency.createMany({ data, skipDuplicates: true }),
             },

@@ -1,112 +1,110 @@
-import { Currency } from "@prisma/client";
-
-export const dummyCurrencies: Currency[] = [
-    {
+export const CURRENCIES = {
+    Indonesia: {
         code: "IDR",
         countryCode: "ID",
-        countryName: "Indonesia",
         name: "Indonesian Rupiah",
+        symbol: "Rp",
     },
-    {
+    "United States": {
         code: "USD",
         countryCode: "US",
-        countryName: "United States",
         name: "United States Dollar",
+        symbol: "$",
     },
-    {
+    Japan: {
         code: "JPY",
         countryCode: "JP",
-        countryName: "Japan",
         name: "Japanese Yen",
+        symbol: "¥",
     },
-    {
+    Singapore: {
         code: "SGD",
         countryCode: "SG",
-        countryName: "Singapore",
         name: "Singapore Dollar",
+        symbol: "S$",
     },
-    {
+    "Saudi Arabia": {
         code: "SAR",
         countryCode: "SA",
-        countryName: "Saudi Arabia",
         name: "Saudi Riyal",
+        symbol: "﷼",
     },
-    {
+    "Hong Kong": {
         code: "HKD",
         countryCode: "HK",
-        countryName: "Hong Kong",
         name: "Hong Kong Dollar",
+        symbol: "HK$",
     },
-    {
+    "United Kingdom": {
         code: "GBP",
         countryCode: "GB",
-        countryName: "United Kingdom",
         name: "British Pound Sterling",
+        symbol: "£",
     },
-    {
+    China: {
         code: "CNY",
         countryCode: "CN",
-        countryName: "China",
         name: "Chinese Yuan",
+        symbol: "¥",
     },
-    {
+    "New Zealand": {
         code: "NZD",
         countryCode: "NZ",
-        countryName: "New Zealand",
         name: "New Zealand Dollar",
+        symbol: "NZ$",
     },
-    {
+    Sweden: {
         code: "SEK",
         countryCode: "SE",
-        countryName: "Sweden",
         name: "Swedish Krona",
+        symbol: "kr",
     },
-    {
+    "United Arab Emirates": {
         code: "AED",
         countryCode: "AE",
-        countryName: "United Arab Emirates",
         name: "UAE Dirham",
+        symbol: "د.إ",
     },
-    {
+    Norway: {
         code: "NOK",
         countryCode: "NO",
-        countryName: "Norway",
         name: "Norwegian Krone",
+        symbol: "kr",
     },
-    {
+    Eurozone: {
         code: "EUR",
         countryCode: "EU",
-        countryName: "Eurozone",
         name: "Euro",
+        symbol: "€",
     },
-    {
+    Switzerland: {
         code: "CHF",
         countryCode: "CH",
-        countryName: "Switzerland",
         name: "Swiss Franc",
+        symbol: "CHF",
     },
-    {
+    Canada: {
         code: "CAD",
         countryCode: "CA",
-        countryName: "Canada",
         name: "Canadian Dollar",
+        symbol: "$",
     },
-    {
+    Australia: {
         code: "AUD",
         countryCode: "AU",
-        countryName: "Australia",
         name: "Australian Dollar",
+        symbol: "A$",
     },
-    {
+    Taiwan: {
         code: "TWD",
         countryCode: "TW",
-        countryName: "Taiwan",
         name: "New Taiwan Dollar",
+        symbol: "NT$",
     },
-    {
+    ALL: {
         code: "ALL",
         countryCode: "ALL",
-        countryName: "ALL",
         name: "ALL",
+        symbol: "ALL",
     },
-] as const
+} as const;

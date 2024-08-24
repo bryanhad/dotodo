@@ -19,6 +19,8 @@ import {
 } from "./lib";
 import { dummyModules } from "./seed/modules";
 import { dummyIssues } from "./seed/issues";
+import { CURRENCIES } from "./seed/currencies";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export async function seedTables(
     seedDatas: {
@@ -28,9 +30,23 @@ export async function seedTables(
     }[],
 ) {
     for (const { method, seedData, tableName } of seedDatas) {
-        console.log(`🏁 BEGIN SEEDING '${tableName.toUpperCase()}' TABLE`);
-        await method(seedData);
-        console.log(`✔ SUCCESS`);
+        try {
+            console.log(`🏁 BEGIN SEEDING '${tableName.toUpperCase()}' TABLE`);
+            console.log(seedData)
+            await method(seedData);
+            console.log(`✔ SUCCESS`);
+        } catch (err: any | PrismaClientKnownRequestError) {
+            // const bruh: any[] = seedData.map(bru => bru.currencyCode)
+            // console.log(bruh)
+
+            // const uniqueArray = bruh.filter(
+            //     (value, index, self) =>
+            //         index === self.findIndex((obj) => obj.id === value.id)
+            // );
+
+            // console.log(uniqueArray)
+            throw new Error(err);
+        }
     }
 }
 
@@ -117,7 +133,7 @@ export function generateIssuesSeed(
     usersSeed: Pick<User, "id">[],
     tagsSeed: Pick<Tag, "id">[],
     modulesSeed: Pick<Tag, "id">[],
-): Omit<Issue, 'lastUpdatedAt'>[] {
+): Omit<Issue, "lastUpdatedAt">[] {
     return dummyIssues.map((issue) => {
         const issueId = generateIdFromEntropySize(10); // 16 characters long
         const randomDate = generateRandomDate();
@@ -142,6 +158,15 @@ export function generateIssuesSeed(
     });
 }
 
+export function generateCurrenciesSeed(currencies: typeof CURRENCIES) {
+    return Object.entries(currencies).map(([key, value]) => {
+        return {
+            countryName: key,
+            ...value,
+        };
+    }) as Currency[];
+}
+
 export function generateCutoffsSeed(
     modulesSeed: Pick<Module, "id">[],
     usersSeed: Pick<User, "id">[],
@@ -155,6 +180,7 @@ export function generateCutoffsSeed(
         const moduleCurrencies = currencySeed.slice(0, currencyCount);
 
         for (const currency of moduleCurrencies) {
+            console.log(currency)
             const cutoffId = generateIdFromEntropySize(10); // 16 characters long
 
             const randomUserId = getRandomSeedId(usersSeed);
